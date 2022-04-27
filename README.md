@@ -9,7 +9,7 @@ Descargar [este](https://drive.google.com/file/d/10g3pHxck5nuki5l9KdwhPd8k1atlob
 
 Abrir el proyecto desde Unity Hub, si dice que hay errores en el codigo elegir la opcion "ignorar", luego importar el Unity Package descargado anteriormente.
 
-En la carpeta /Assets/Unvertioned/Scenes se podra encontrar la escena "Demo" que contiene la funcional desarrollada hasta el momento.
+En la carpeta /Assets/Unvertioned/Scenes se podra encontrar la escena "GTA-PeatonesNoCominada" que contiene la funcional desarrollada hasta el momento.
 
 ### Importante
 En las opciones del proyecto, asegurarse que esten seleccionados "Visible Meta Files" y "Asset Serialization: Force Text"
