@@ -1,6 +1,6 @@
 # NFJSimulator
 
-## Como descargar el Proyecto:
+## Como descargar el Proyecto
 El proyecto utiliza la version 2021.2.0b13 de Unity. Asegurarse de tener Unity Hub y esta version de Unity instalada.
 
 Clonar el repositorio, luego abrir Unity Hub, seleccionar "ADD", y en el explorador elegir la carpeta en la cual se clono el repositorio.
@@ -10,6 +10,9 @@ Descargar el Unity Package -LINK- para conseguir el resto de los Assets.
 Abrir el proyecto desde Unity Hub, si dice que hay errores en el codigo elegir la opcion "ignorar", luego importar el Unity Package descargado anteriormente.
 
 En la carpeta /Assets/Unvertioned/Scenes se podra encontrar la escena "Demo" que contiene la funcional desarrollada hasta el momento.
+
+### Importante
+En las opciones del proyecto, asegurarse que esten seleccionados "Visible Meta Files" y "Asset Serialization: Force Text"
 
 ## Como controlar las versiones de codigo y otros archivos de texto
 Por cuestiones de espacio, no todos los archivos pueden ser versionados. Los modelos 3D, imagenes, y archivos de audio, por ejemplo, son demasiado grandes para versionar utiliando GitHub.
