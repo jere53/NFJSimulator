@@ -1,15 +1,18 @@
 # NFJSimulator
 
-## Como descargar el Proyecto:
+## Como descargar el Proyecto
 El proyecto utiliza la version 2021.2.0b13 de Unity. Asegurarse de tener Unity Hub y esta version de Unity instalada.
 
 Clonar el repositorio, luego abrir Unity Hub, seleccionar "ADD", y en el explorador elegir la carpeta en la cual se clono el repositorio.
 
-Descargar el Unity Package -LINK- para conseguir el resto de los Assets.
+Descargar [este](https://drive.google.com/file/d/10g3pHxck5nuki5l9KdwhPd8k1atlobLS/view?usp=sharing) Unity Package para conseguir el resto de los Assets.
 
 Abrir el proyecto desde Unity Hub, si dice que hay errores en el codigo elegir la opcion "ignorar", luego importar el Unity Package descargado anteriormente.
 
-En la carpeta /Assets/Unvertioned/Scenes se podra encontrar la escena "Demo" que contiene la funcional desarrollada hasta el momento.
+En la carpeta /Assets/Unvertioned/Scenes se podra encontrar la escena "GTA-PeatonesNoCominada" que contiene la funcional desarrollada hasta el momento.
+
+### Importante
+En las opciones del proyecto, asegurarse que esten seleccionados "Visible Meta Files" y "Asset Serialization: Force Text"
 
 ## Como controlar las versiones de codigo y otros archivos de texto
 Por cuestiones de espacio, no todos los archivos pueden ser versionados. Los modelos 3D, imagenes, y archivos de audio, por ejemplo, son demasiado grandes para versionar utiliando GitHub.
@@ -38,12 +41,12 @@ Si por alguna razon debieran mantenerse ambas versiones de Video1, entonces esto
 ## El Merge
 El codigo y la documentacion pueden ser mergeados usando Git, pero para lo "Unversioned" el proceso sera el siguiente: 
 
-> Inicialmente, todos conseguiran la misma carpeta "Unversioned" descargando un Unity Package disponible en -LINK-
+> Inicialmente, todos conseguiran la misma carpeta "Unversioned" descargando un Unity Package disponible [aqui](https://drive.google.com/file/d/10g3pHxck5nuki5l9KdwhPd8k1atlobLS/view?usp=sharing)
   
 > Los miembros crean las branches necesarias para su trabajo
   
 > Cuando se desean mergear los cambios de una rama, se realiza el Pull Request en GitHub para mergear el codigo a la rama base.
   
-> Luego, cuando uno quiera hacer el "pull request" de su Unversioned, se debera construir un Paquete Unity con la carpeta correspondiente a ese branch. Por ejemplo, si quiero mergear lo "Unversioned" de la branch "b_de_j_12", exportar un Unity Package con la carpeta "/Assets/Unversioned/b_de_j_12". Ese Unity Package se subira a -LINK-, para que los otros miembros del equipo puedan descargarlo. Si es necesario reemplazar uno de los archivos en "Unversioned" cono uno de los de ese Unity Package, esto se le notificara al resto del equipo para que puedan realizar ese reemplazo.
+> Luego, cuando uno quiera hacer el "pull request" de su Unversioned, se debera construir un Paquete Unity con la carpeta correspondiente a ese branch. Por ejemplo, si quiero mergear lo "Unversioned" de la branch "b_de_j_12", exportar un Unity Package con la carpeta "/Assets/Unversioned/b_de_j_12". Ese Unity Package se subira a una carpeta con en el nombre de la branch dentro de [este Drive](https://drive.google.com/drive/folders/1ReQVB0rvMVVJBeyd1RiOm2vcusxNZCiy?usp=sharing), para que los otros miembros del equipo puedan descargarlo. Si es necesario reemplazar uno de los archivos en "Unversioned" cono uno de los de ese Unity Package, esto se le notificara al resto del equipo para que puedan realizar ese reemplazo.
   
-> De esta manera, cada rama tendra su Codigo y Documentacion en GitHub, y su Unity Package correspondiente en -LINK-
+> De esta manera, cada rama tendra su Codigo y Documentacion en GitHub, y su Unity Package correspondiente en [Drive](https://drive.google.com/drive/folders/1ReQVB0rvMVVJBeyd1RiOm2vcusxNZCiy?usp=sharing)
