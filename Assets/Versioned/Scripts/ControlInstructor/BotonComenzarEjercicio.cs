@@ -19,14 +19,13 @@ public class BotonComenzarEjercicio : MonoBehaviour
 
     public TMP_Dropdown _seleccionEjercicio;
 
-    public SimulationController simController;
+    public LocalSimulationController simController;
 
     public void ComenzarEjercicio()
     {
-        simController.ComenzarEjercicioServerRpc((_seleccionEjercicio.value - 1), _toggleTiempo.isOn, int.Parse(_maxMinutos.text),
+        simController.ComenzarEjercicio((_seleccionEjercicio.value - 1), _toggleTiempo.isOn, int.Parse(_maxMinutos.text),
             int.Parse(_maxSegundos.text), _toggleConsumo.isOn, int.Parse(_maxCombustible.text),
             _toggleVelocidad.isOn, int.Parse(_maxVelocidad.text), _toggleSemaforos.isOn, _toggleAccidentes.isOn);
-
     }
 
 }

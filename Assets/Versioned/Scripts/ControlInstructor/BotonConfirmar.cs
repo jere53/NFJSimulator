@@ -11,7 +11,7 @@ public class BotonConfirmar : MonoBehaviour
     public Slider _sliderVelocidadDia;
     public TMPro.TMP_Dropdown seleccionClima;
 
-    public SimulationController simulationController;
+    public LocalSimulationController simulationController;
 
     public void Confirmar()
     {
@@ -19,19 +19,19 @@ public class BotonConfirmar : MonoBehaviour
         switch (seleccionClima.value)
         {
             case 0 or 1:
-                simulationController.SetWeatherServerRpc("sunny");
+                simulationController.SetWeather("sunny");
                 break;
             case 2: 
-                simulationController.SetWeatherServerRpc("rainy");
+                simulationController.SetWeather("rainy");
                 break;
             case 3: 
-                simulationController.SetWeatherServerRpc("cloudy");
+                simulationController.SetWeather("cloudy");
                 break;
         }
         
-        simulationController.SetPeatonesServerRpc((int)_sliderPeatones.value);
-        simulationController.SetVehiculosServerRpc((int)_sliderVehiculos.value);
-        simulationController.SetToDServerRpc(_sliderHoraDelDia.value, _sliderVelocidadDia.value);
+        simulationController.SetPeatones((int)_sliderPeatones.value);
+        simulationController.SetVehiculos((int)_sliderVehiculos.value);
+        simulationController.SetToD(_sliderHoraDelDia.value, _sliderVelocidadDia.value);
     }
 
 
