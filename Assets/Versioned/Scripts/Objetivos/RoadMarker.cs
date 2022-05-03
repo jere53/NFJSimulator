@@ -10,6 +10,7 @@ public class RoadMarker : MonoBehaviour
     [SerializeField] private float distanciaLlegoDestino;
     [SerializeField] private GameObject plano;
     [NonSerialized] public bool estaVolviendo;
+    private DatosEvaluacion _datosEvaluacion = new DatosEvaluacion();
 
     void Update()
     {
@@ -31,10 +32,11 @@ public class RoadMarker : MonoBehaviour
                 foreach (var criterio in criterios)
                 {
                     criterio.ConcluirEvaluacion();
-                    criterio.PresentarEvaluacion();
+                    criterio.ObtenerDatosEvaluacion(ref _datosEvaluacion);
                     criterio.Remover();
                 }
 
+                _datosEvaluacion.Presentar();
                 estaVolviendo = false;
                 enabled = false;
             } 

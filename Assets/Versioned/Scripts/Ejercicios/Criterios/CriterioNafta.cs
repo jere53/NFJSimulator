@@ -7,15 +7,23 @@ using VehiclePhysics;
 public class CriterioNafta : MonoBehaviour, ICriterio
 {
     public float objetivoLitrosConsumidos;
-    private float litrosConsumidos;
-    private bool _evaluando;
+    private float _litrosConsumidos;
 
     private VehicleBase _vehicle;
+
+    private void Awake()
+    {
+        _vehicle = GetComponent<VehicleBase>();
+
+        if (!_vehicle)
+        {
+            Debug.LogError("No se encontro un VPVehiclBase en el G.O. correspondiente al vehiculo del trainee");
+        }
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if(!_evaluando) return;
         //consumo de combustible actual en gramos/segundo
         float consumoInstantaneo = _vehicle.data.Get(Channel.Vehicle, VehicleData.EngineFuelRate) / 1000.0f;
 
@@ -23,26 +31,24 @@ public class CriterioNafta : MonoBehaviour, ICriterio
         //approx 740 gramos, por lo tanto dividimos por 740
         
         if (consumoInstantaneo > 0)
-            litrosConsumidos += consumoInstantaneo * Time.deltaTime;
+            _litrosConsumidos += consumoInstantaneo * Time.deltaTime;
     }
 
-    public void PresentarEvaluacion()
+    public void ObtenerDatosEvaluacion(ref DatosEvaluacion datosEvaluacion)
     {
-        string resultado = "El objetivo de consumo de combustible eran: " + objetivoLitrosConsumidos + " litros."
-                           + '\n' + "El Evaluado consumio " + litrosConsumidos + " litros";
-
-        Debug.Log(resultado);
+        datosEvaluacion.DatosCriterioNafta = new Tuple<float, float>(_litrosConsumidos, objetivoLitrosConsumidos);
     }
 
     public void ComenzarEvaluacion()
     {
-        _vehicle = GetComponent<VehicleBase>();
-        _evaluando = true;
+        _litrosConsumidos = 0;
+        enabled = true;
+        
     }
 
     public void ConcluirEvaluacion()
     {
-        _evaluando = false;
+        enabled = false;
     }
     
     public void Remover()

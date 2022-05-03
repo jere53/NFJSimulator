@@ -7,16 +7,23 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
 {
     private bool _evaluando;
 
-    private int _peatonesGolpeados;
-    private int _colisionesContraVehiculos;
+    private float _tiempoActual;
     
-    private Dictionary<int, bool> _idsVehiculosGolpeados = new Dictionary<int, bool>(); //para que no reporte mas de una colision contra un mismo vehiculo.
+    private List<float> _golpesAPeatones = new List<float>();
+    private List<Tuple<float, int>> _golpesAVehiculos = new List<Tuple<float, int>>();
+
+    private void Update()
+    {
+        _tiempoActual += Time.deltaTime;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!_evaluando) return;
         if (other.CompareTag("Peaton"))
-            _peatonesGolpeados++;
+        {
+            _golpesAPeatones.Add(_tiempoActual);
+        }
     }
 
     private void OnCollisionEnter(Collision other)
@@ -24,30 +31,29 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
         if (!_evaluando) return;
         if (other.gameObject.CompareTag("Auto"))
         {
-            _colisionesContraVehiculos++;
-            if (!_idsVehiculosGolpeados.ContainsKey(other.gameObject.GetInstanceID())){
-                _idsVehiculosGolpeados.Add(other.gameObject.GetInstanceID(), true);
-            }
-
+            _golpesAVehiculos.Add(new Tuple<float, int>(_tiempoActual, other.gameObject.GetInstanceID()));
         }
     }
 
-    public void PresentarEvaluacion()
+    public void ObtenerDatosEvaluacion(ref DatosEvaluacion datosEvaluacion)
     {
-        string resultadoEvaluacion = "El Evaluado golpeo a " + _peatonesGolpeados + " peatones, y tuvo " +
-                                     _colisionesContraVehiculos + " colisiones con " +
-                                     _idsVehiculosGolpeados.Count + " vehiculos diferentes.";
-        Debug.Log(resultadoEvaluacion);
+        datosEvaluacion.DatosCriterioEvitarAccidentes = new Tuple<List<float>, 
+            List<Tuple<float, int>>>(_golpesAPeatones, _golpesAVehiculos);
+        
     }
 
     public void ComenzarEvaluacion()
     {
-        _peatonesGolpeados = 0;
+        _golpesAPeatones.Clear();
+        _golpesAVehiculos.Clear();
+        _tiempoActual = 0;
+        enabled = true;
         _evaluando = true;
     }
 
     public void ConcluirEvaluacion()
     {
+        enabled = false;
         _evaluando = false;
     }
 

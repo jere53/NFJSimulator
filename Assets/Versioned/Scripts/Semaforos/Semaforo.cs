@@ -36,13 +36,12 @@ public class Semaforo : MonoBehaviour
         ApagarLuces(rojo);
         PrenderLuces(amarillo);
         luzActual = 1;
+        colliderParaVehiculos.enabled = false;
         yield return new WaitForSeconds(1f);
         ApagarLuces(amarillo);
         PrenderLuces(verde);
         luzActual = 2;
 
-        colliderParaVehiculos.enabled = false;
-        
         foreach (var e in zonasEspera)
         {
             e.puedePasar = false;
@@ -55,19 +54,13 @@ public class Semaforo : MonoBehaviour
         ApagarLuces(verde);
         PrenderLuces(amarillo);
         luzActual = 1;
-        colliderParaVehiculos.enabled = true;
-        
-        foreach (var e in zonasEspera)
-        {
-            e.puedePasar = true;
-        }
-        
+
         yield return new WaitForSeconds(1f);
+        colliderParaVehiculos.enabled = true;
         ApagarLuces(amarillo);
         PrenderLuces(rojo);
         luzActual = 0;
-        colliderParaVehiculos.enabled = true;
-        
+
         foreach (var e in zonasEspera)
         {
             e.puedePasar = true;
@@ -79,7 +72,13 @@ public class Semaforo : MonoBehaviour
         ApagarLuces(verde);
         ApagarLuces(amarillo);
         PrenderLuces(rojo);
+        colliderParaVehiculos.enabled = true;
         luzActual = 0;
+        
+        foreach (var e in zonasEspera)
+        {
+            e.puedePasar = true;
+        }
     }
     
     public void VerdeInmediato()
@@ -87,7 +86,13 @@ public class Semaforo : MonoBehaviour
         ApagarLuces(rojo);
         ApagarLuces(amarillo);
         PrenderLuces(verde);
+        colliderParaVehiculos.enabled = false;
         luzActual = 2;
+        
+        foreach (var e in zonasEspera)
+        {
+            e.puedePasar = false;
+        }
     }
     
     public void AmarilloInmediato()
@@ -95,6 +100,7 @@ public class Semaforo : MonoBehaviour
         ApagarLuces(rojo);
         ApagarLuces(verde);
         PrenderLuces(amarillo);
+        colliderParaVehiculos.enabled = false;
         luzActual = 1;
     }
     

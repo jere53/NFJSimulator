@@ -11,56 +11,81 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
 
     private VehicleBase _vehicle;
     
-    private List<string> _excesosDeVelocidad = new List<string>();
+    private List<Tuple<float, float, bool>> _infracciones = new List<Tuple<float, float, bool>>();
     
     private float _tiempoActual;
 
-    
+    private bool _enInfraccion;
+
+    public float granularidad = 4; //cada cuantos segundos registrar la velocidad, si esta en exceso. 
+
+    private float _tiempoHastaMedida = 0f;
+
+
+    private void Awake()
+    {
+        _vehicle = GetComponent<VehicleBase>();
+
+        if (!_vehicle)
+        {
+            Debug.LogError("No se encontro un VPVehicleBase en el G.O. correspondiente al Trainee");
+        }
+    }
+
     // Start is called before the first frame update
     private void Update()
     {
         _tiempoActual += Time.deltaTime;
-    }
-
-    // Revisa la velocidad periodicamente
-    IEnumerator RevisarVelocidad()
-    {
-        while (true)
+        
+        float velocidadActual =
+            (_vehicle.data.Get(Channel.Vehicle, VehicleData.Speed) / 1000f) * 3.6f; //para llevarlo a KM/h 
+        
+        //Para no guardar muchos datos innecesarios, tenemos el flag enInfraccion. Cuando se detecta un exceso de velocidad,
+        //se marca el comienzo de la infraccion y se registran las velocidades en exceso cada approx. <granularidad> segundos.
+        //Cuando se vuelva a los confines de la velocidadMaxima, se resettea el flag enInfraccion.
+        
+        if (velocidadActual > velocidadMaximaKMh)
         {
-            float velocidadActual =
-                (_vehicle.data.Get(Channel.Vehicle, VehicleData.Speed) / 1000f) * 3.6f; //para llevarlo a KM/h 
-
-            if (velocidadActual > velocidadMaximaKMh)
+            _enInfraccion = true;
+            if (_tiempoHastaMedida <= 0f)
             {
-                TimeSpan tiempoInfraccion = TimeSpan.FromSeconds(_tiempoActual);
-                _excesosDeVelocidad.Add("Exceso de velocidad a los " + tiempoInfraccion.Minutes + "\'" +
-                                       tiempoInfraccion.Seconds + "\""
-                                       + " de comenzada la evaluacion" + '\n' + "Velocidad Maxima: " 
-                                       + velocidadMaximaKMh + " velocidad del Evaluado: " + velocidadActual);
-                yield return new WaitForSeconds(10f); //para darle tiempo a que baje la velocidad.
+                _infracciones.Add(new Tuple<float, float, bool >(_tiempoActual, velocidadActual, true));
+                _tiempoHastaMedida = granularidad;
             }
-
-            yield return new WaitForSeconds(2f); 
+            else
+            {
+                _tiempoHastaMedida -= Time.deltaTime;
+            }
         }
-    }
-
-    public void PresentarEvaluacion()
-    {
-        foreach (var s in _excesosDeVelocidad)
+        else
         {
-            Debug.Log(s);
+            if (_enInfraccion) //significa que se estaba excediendo pero ya paro, entonces se agrega a la lista el "final" de la excesion
+            {
+                _infracciones.Add(new Tuple<float, float, bool>(_tiempoActual, velocidadActual, false));
+            }
+            _enInfraccion = false;
+            _tiempoHastaMedida = 0f;
         }
+        
+    }
+    
+
+    public void ObtenerDatosEvaluacion(ref DatosEvaluacion resultado)
+    {
+        resultado.DatosCriterioVelocidadMaxima = _infracciones;
     }
 
     public void ComenzarEvaluacion()
     {
-        _vehicle = GetComponent<VehicleBase>();
-        StartCoroutine(RevisarVelocidad());
+        _infracciones.Clear();
+        enabled = true;
+        _tiempoActual = 0;
+        _enInfraccion = false;
     }
 
     public void ConcluirEvaluacion()
     {
-        StopCoroutine(RevisarVelocidad());
+        enabled = false;
     }
     
     public void Remover()
