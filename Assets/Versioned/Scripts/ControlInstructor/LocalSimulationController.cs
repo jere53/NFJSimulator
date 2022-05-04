@@ -45,7 +45,9 @@ public class LocalSimulationController : MonoBehaviour
     }
 
     public void ComenzarEjercicio(int indiceEjercicio, bool evalTiempo, int maxMinutos, int maxSegundos,
-        bool evalCombustible, int maxLitros, bool evalVelocidad, int maxVelocidad, bool evalSemaforos, bool evalAccidentes)
+        bool evalCombustible, int maxLitros, bool evalVelocidad, int maxVelocidad, bool evalSemaforos, 
+        bool evalAccidentes, bool evalVolantazos, float maxDoblaje, bool evalAceleracion, float maxAceleracion,
+        bool evalRPM, int minRPM, int maxRPM)
     {
         if (indiceEjercicio < 0 || ejercicios.Count == 0) return;
         if (evalTiempo)
@@ -77,6 +79,25 @@ public class LocalSimulationController : MonoBehaviour
             vehiculoTrainee.AddComponent<CriterioEvitarAccidentes>();
         }
 
+        if (evalVolantazos)
+        {
+            var cV = vehiculoTrainee.AddComponent<CriterioVolantazo>();
+            cV.doblajeSeguroMaximo = maxDoblaje;
+        }
+
+        if (evalAceleracion)
+        {
+            var cA = vehiculoTrainee.AddComponent<CriterioAceleracion>();
+            cA.maximaAceleracion = maxAceleracion;
+        }
+
+        if (evalRPM)
+        {
+            var cRpm = vehiculoTrainee.AddComponent<CriterioRPM>();
+            cRpm.maximoRpm = maxRPM;
+            cRpm.minimoRpm = minRPM;
+        }
+        
         ejercicios[indiceEjercicio].Comenzar();
     }
 }

@@ -17,11 +17,30 @@ public interface ICriterio
 public class DatosEvaluacion
 {
     public Tuple<TimeSpan, TimeSpan> DatosCriterioTiempo = null;
+    //TiempoEvaluado, TiempoMaximo
+    
     public List<Tuple<float, float, bool>> DatosCriterioVelocidadMaxima = null;
+    //List<_tiempoActual, velocidadActual, corrigioInfraccion>
+    
     public List<float> DatosCriterioRespetarSemaforos = null;
+    //List<_tiempoActual> (de la infraccion)
+    
+    
     public Tuple<float, float> DatosCriterioNafta = null;
+    //_litrosConsumidos, _objetivoLitrosConsumidos 
+    
     public Tuple<List<float>, List<Tuple<float, int>>> DatosCriterioEvitarAccidentes = null;
+    //List<_tiempoActual> (peatones), List<_tiempoActual, InstanceID> (vehiculos)
+    
+    public List<Tuple<float, int, int, int, bool>> DatosCriterioRPM = null;
+    //_tiempoActual, rpmActuales, minimoRPM, maximoRPM, corrigioInfraccion
 
+    public List<Tuple<float, float, float, float, float>> DatosCriterioAceleracion = null;
+    //_timepoActual, Along, Alat, Avert, Amax
+    
+    public List<Tuple<float, float, float>> DatosCriterioVolantazo = null;
+    //_tiempoActual, doblajeRealizado, doblajeMaximo, granularidad
+    
     public void Presentar()
     {
         PresentarTiempo();
@@ -29,6 +48,9 @@ public class DatosEvaluacion
         PresentarRespetarSemaforos();
         PresentarNafta();
         PresentarAccidentes();
+        PresentarRPM();
+        PresentarAceleracion();
+        PresentarVolantazo();
     }
 
     void PresentarTiempo()
@@ -119,6 +141,55 @@ public class DatosEvaluacion
         foreach (var golpe in golpesAVehiculos)
         {
             Debug.Log(golpe.Item1 + "se golpeo al vehiculo con ID: " + golpe.Item2 + "\n");
+        }
+    }
+
+    void PresentarRPM()
+    {
+        if(DatosCriterioRPM == null) return;
+        
+        Debug.Log("Se detectaron las siguientes faltas en RPM:");
+        
+        foreach (var infraccion in DatosCriterioRPM)
+        {
+            if (infraccion.Item5) //si comenzo una infraccion
+            {
+                Debug.Log("Falta en el momento: " + TimeSpan.FromSeconds(infraccion.Item1) + " RPMs detectadas = " 
+                          + infraccion.Item2 + "\n Rango aceptado: " + infraccion.Item3 + "; " + infraccion.Item4);
+            }
+            else
+            { 
+                //si concluyo una infraccion
+                Debug.Log("Se corrigio una falta y se volvio a respetar el limite de RPM en el momento: " 
+                          + TimeSpan.FromSeconds(infraccion.Item1) + " RPMs detectadas = " + infraccion.Item2
+                          + "\n Rango aceptado: " + infraccion.Item3 + "; " + infraccion.Item4);
+            }
+        }
+    }
+
+    void PresentarAceleracion()
+    {
+        if (DatosCriterioAceleracion == null) return;
+
+        Debug.Log("Se detectaron los siguientes errores respecto a la aceleracion: ");
+
+        foreach (var infraccion in DatosCriterioAceleracion)
+        {
+            Debug.Log("La aceleracion maxima, en Gs, era: " + infraccion.Item5 + "\n");
+            Debug.Log("Las aceleraciones registradas al momento " + infraccion.Item1 + 
+                      "fueron: \n Longitudinal: " + infraccion.Item2 + "\n Lateral: " + infraccion.Item3 + 
+                      "\n Vertical: " + infraccion.Item4);
+        }
+    }
+
+    void PresentarVolantazo()
+    {
+        Debug.Log("Volantazos: ");
+        foreach (var infraccion in DatosCriterioVolantazo)
+        {
+            Debug.Log("En el momento " + infraccion.Item1 + " se dio un volantazo de " + 
+                      infraccion.Item2 + " radianes/seg." +
+                      "El maximo volantazo seguro en esa cantidad de segundos era " + infraccion.Item3 + "rads/s \n");
         }
     }
 }

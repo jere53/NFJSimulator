@@ -17,7 +17,7 @@ public class CriterioNafta : MonoBehaviour, ICriterio
 
         if (!_vehicle)
         {
-            Debug.LogError("No se encontro un VPVehiclBase en el G.O. correspondiente al vehiculo del trainee");
+            Debug.LogError("No se encontro un VPVehicleBase en el G.O. correspondiente al vehiculo del trainee");
         }
     }
 
