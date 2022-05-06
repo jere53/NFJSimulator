@@ -53,4 +53,6 @@ El codigo y la documentacion pueden ser mergeados usando Git, pero para lo "Unve
 
 ## Las ramas
 La rama "main" contiene la baseline del proyecto
-La rama "nfjsimulator_v1.1 es la rama base para el trabajo realizado durante el Sprint 1. Sera el destino de los Pull Request duante el Sprint 1
+La rama "nfjsimulator_v1.1" es la rama base para el trabajo realizado durante el Sprint 1. Sera el destino de los Pull Request duante el Sprint 1
+
+Las ramas que se creen para el trabajo durante el Sprint 1 deben ser ramas de "nfjsimulator_v1.1". Para esto, al crear la rama en la terminal escribir "git checkout -b <nombre_Rama> nfjsimulator_v1.1". Esto hara que se branchee desde "nfjsimulator_v1.1" y no desde "main".
