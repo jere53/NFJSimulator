@@ -50,3 +50,7 @@ El codigo y la documentacion pueden ser mergeados usando Git, pero para lo "Unve
 > Luego, cuando uno quiera hacer el "pull request" de su Unversioned, se debera construir un Paquete Unity con la carpeta correspondiente a ese branch. Por ejemplo, si quiero mergear lo "Unversioned" de la branch "b_de_j_12", exportar un Unity Package con la carpeta "/Assets/Unversioned/b_de_j_12". Ese Unity Package se subira a una carpeta con en el nombre de la branch dentro de [este Drive](https://drive.google.com/drive/folders/1ReQVB0rvMVVJBeyd1RiOm2vcusxNZCiy?usp=sharing), para que los otros miembros del equipo puedan descargarlo. Si es necesario reemplazar uno de los archivos en "Unversioned" cono uno de los de ese Unity Package, esto se le notificara al resto del equipo para que puedan realizar ese reemplazo.
   
 > De esta manera, cada rama tendra su Codigo y Documentacion en GitHub, y su Unity Package correspondiente en [Drive](https://drive.google.com/drive/folders/1ReQVB0rvMVVJBeyd1RiOm2vcusxNZCiy?usp=sharing)
+
+## Las ramas
+La rama "main" contiene la baseline del proyecto
+La rama "nfjsimulator_v1.1 es la rama base para el trabajo realizado durante el Sprint 1. Sera el destino de los Pull Request duante el Sprint 1
