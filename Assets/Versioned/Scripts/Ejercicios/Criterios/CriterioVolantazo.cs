@@ -54,37 +54,6 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-         //DEPRECATED: Idea original de usar la input para medir volantazos.
-        _tiempoActual += Time.deltaTime;
-
-        if (_timer > 0f)
-        {
-            _timer -= Time.deltaTime;
-            return;
-        }
-        
-        int inputSteering = _vehicle.data.Get(Channel.Input, InputData.Steer) / 100; //el DB va de -10000 a +10000, divimos por 100 para que nos quede de
-        //-100 a 100, y usarlo como porcentaje
-
-        int doblajeRealizado = Mathf.Abs(inputSteering - _ultimaInputSteering);
-        
-        if (doblajeRealizado >= doblajeSeguroMaximo)
-        {
-            _infracciones.Add(new Tuple<float, int, int, int>(_tiempoActual, doblajeRealizado, doblajeSeguroMaximo, granularidad));
-            Debug.Log("volantazo! " + doblajeRealizado + " de doblaje en " + granularidad + "max seguro era: " + doblajeSeguroMaximo );
-        }
-        
-        _timer = granularidad;
-        
-        _ultimaInputSteering = _vehicle.data.Get(Channel.Input, InputData.Steer) / 100;
-        */
-
-    }
-
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {
         datos.DatosCriterioVolantazo = _infracciones;

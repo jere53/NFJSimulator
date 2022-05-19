@@ -18,6 +18,7 @@ public class MenuPausa : EscapeDialog
     public GameObject condiciones;
     public GameObject ejercicios;
     public GameObject princial;
+    public GameObject evaluacionActual;
 
     void Update ()
     {
@@ -63,6 +64,7 @@ public class MenuPausa : EscapeDialog
     {
         condiciones.SetActive(false);
         ejercicios.SetActive(false);
+        evaluacionActual.SetActive(false);
         princial.SetActive(true);
     }
     
@@ -77,7 +79,12 @@ public class MenuPausa : EscapeDialog
         princial.SetActive(false);
         ejercicios.SetActive(true);
     }
-    
+
+    public void EvaluacionActual()
+    {
+        princial.SetActive(false);
+        evaluacionActual.SetActive(true);
+    }
     public void Quit()
     {
         Application.Quit();

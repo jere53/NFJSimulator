@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
-
 public interface ICriterio
 {
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos);
@@ -24,15 +25,14 @@ public class DatosEvaluacion
     
     public List<float> DatosCriterioRespetarSemaforos = null;
     //List<_tiempoActual> (de la infraccion)
-    
-    
+
     public Tuple<float, float> DatosCriterioNafta = null;
     //_litrosConsumidos, _objetivoLitrosConsumidos 
     
     public Tuple<List<float>, List<Tuple<float, int>>> DatosCriterioEvitarAccidentes = null;
     //List<_tiempoActual> (peatones), List<_tiempoActual, InstanceID> (vehiculos)
     
-    public List<Tuple<float, int, int, int, bool>> DatosCriterioRPM = null;
+    public List<Tuple<float, int, int, int, bool>> DatosCriterioRpm = null;
     //_tiempoActual, rpmActuales, minimoRPM, maximoRPM, corrigioInfraccion
 
     public List<Tuple<float, float, float, float, float>> DatosCriterioAceleracion = null;
@@ -146,11 +146,11 @@ public class DatosEvaluacion
 
     void PresentarRPM()
     {
-        if(DatosCriterioRPM == null) return;
+        if(DatosCriterioRpm == null) return;
         
         Debug.Log("Se detectaron las siguientes faltas en RPM:");
         
-        foreach (var infraccion in DatosCriterioRPM)
+        foreach (var infraccion in DatosCriterioRpm)
         {
             if (infraccion.Item5) //si comenzo una infraccion
             {
@@ -184,6 +184,7 @@ public class DatosEvaluacion
 
     void PresentarVolantazo()
     {
+        if (DatosCriterioVolantazo == null) return;
         Debug.Log("Volantazos: ");
         foreach (var infraccion in DatosCriterioVolantazo)
         {
@@ -191,5 +192,34 @@ public class DatosEvaluacion
                       infraccion.Item2 + " radianes/seg." +
                       "El maximo volantazo seguro en esa cantidad de segundos era " + infraccion.Item3 + "rads/s \n");
         }
+    }
+
+    public void GuardarEnDisco(string path)
+    {
+        string output = JsonConvert.SerializeObject(this);
+        try
+        {
+            File.WriteAllText(path, output);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(exception);
+        }
+    }
+
+    public static DatosEvaluacion CargarDeDisco(string path)
+    {
+        DatosEvaluacion res = new DatosEvaluacion();
+        try
+        {
+            var inputString = File.ReadAllText(path);
+            res = JsonConvert.DeserializeObject<DatosEvaluacion>(inputString);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning("Se produjo un error al intentar cargar el archivo");
+            Debug.LogWarning(exception);
+        }
+        return res;
     }
 }

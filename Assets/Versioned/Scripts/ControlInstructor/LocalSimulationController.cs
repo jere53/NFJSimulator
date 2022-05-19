@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class LocalSimulationController : MonoBehaviour
 {
+    private EvaluationService _evaluationService = new EvaluationService();
     public WeatherController weatherController;
     public SpawnManager spawnManager;
     public DayNightCicle dayNightCicle;
@@ -99,5 +100,25 @@ public class LocalSimulationController : MonoBehaviour
         }
         
         ejercicios[indiceEjercicio].Comenzar();
+    }
+
+    public void ComenzarEvaluacion(SeleccionCriterios criterios)
+    {
+        _evaluationService.ComenzarEvaluacion(vehiculoTrainee, criterios);
+    }
+
+    public void ConcluirEvaluacion()
+    {
+        _evaluationService.ConcluirEvaluacion(vehiculoTrainee);
+    }
+
+    public void AlmacenarUltimaEvaluacion(string nombreArchivo)
+    {
+        _evaluationService.AlmacenarDatosEvaluacion(nombreArchivo);
+    }
+
+    public void CargarEvaluacionTest(string nombreArchivo)
+    {
+        _evaluationService.LogEvaluacionDesdeDisco(nombreArchivo);
     }
 }

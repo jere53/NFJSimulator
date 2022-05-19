@@ -76,7 +76,7 @@ public class CriterioRPM : MonoBehaviour, ICriterio
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {
-        datos.DatosCriterioRPM = _infracciones;
+        datos.DatosCriterioRpm = _infracciones;
     }
 
     public void ComenzarEvaluacion()
