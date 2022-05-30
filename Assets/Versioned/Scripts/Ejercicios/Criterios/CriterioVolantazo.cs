@@ -12,11 +12,15 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
 
     public float doblajeSeguroMaximo; //maxima velocidad de doblaje, radianes por segundo
 
-    public float granularidad = 1; //para que no capture la misma infraccion muchas veces, un "cooldown" hasta que capture la proxima
+    public float granularidad = 4f; //para que no capture la misma infraccion muchas veces, un "cooldown" hasta que capture la proxima
 
     private float _tiempoActual;
 
     private float _timer;
+
+    private float _tiempoHastaCaptura;
+
+    private List<Tuple<float, float>> _yawEnTiempo;
 
     //private int _ultimaInputSteering = 0;
 
@@ -38,6 +42,11 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
     {
         _tiempoActual += Time.fixedDeltaTime;
 
+        if (_timer < -10000f)
+        {
+            _timer = -1f; //para que no se rompa si pasa mucho tiempo sin resettear
+        }
+
         if (_timer > 0f)
         {
             _timer -= Time.fixedDeltaTime;
@@ -47,22 +56,38 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
         if (Mathf.Abs(_vehicle.yawVelocity) >= doblajeSeguroMaximo)
         {
             _infracciones.Add(new Tuple<float, float, float>(_tiempoActual, _vehicle.yawVelocity, doblajeSeguroMaximo));
+            _yawEnTiempo.Add(new Tuple<float, float>(_tiempoActual, _vehicle.yawVelocity));
             //Debug.Log("volantazo! " + _vehicle.yawVelocity + "rads/s de doblaje, max seguro es: " + doblajeSeguroMaximo + "rads/s");
+            _timer = granularidad;
+            _tiempoHastaCaptura = granularidad;
+            return;
+        }
+
+        if (_tiempoHastaCaptura > 0f)
+        {
+            _tiempoHastaCaptura -= Time.fixedDeltaTime;
+            return;
         }
         
-        _timer = granularidad;
+        _yawEnTiempo.Add(new Tuple<float, float>(_tiempoActual, _vehicle.yawVelocity));
         
+        _tiempoHastaCaptura = granularidad;
+
     }
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {
-        datos.DatosCriterioVolantazo = _infracciones;
+        datos.DatosCriterioVolantazos = new DatosCriterioVolantazos();
+        datos.DatosCriterioVolantazos.Infracciones = _infracciones;
+        datos.DatosCriterioVolantazos.YawEnTiempo = _yawEnTiempo;
     }
 
     public void ComenzarEvaluacion()
     {
+        _yawEnTiempo = new List<Tuple<float, float>>();
         enabled = true;
-        _timer = granularidad;
+        _tiempoHastaCaptura = 0;
+        _timer = 0;
         _tiempoActual = 0;
         _infracciones.Clear();
     }

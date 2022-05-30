@@ -14,6 +14,8 @@ public class GrupoTabs : MonoBehaviour
     private BotonTab _tabSeleccionada;
 
     public List<GameObject> objetosACambiar;
+
+    public DebrieferPresenter DebrieferPresenter;
     public void Subscribe(BotonTab botonTab)
     {
         if (botonesTab == null)

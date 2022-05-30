@@ -1,21 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Window_Graph : MonoBehaviour
 {
-    private RectTransform _graphContainer;
+    private RectTransform GraphContainer { get; set; }
     
     //sprite que tendran los puntos del grafico de lineas
-    [SerializeField] private Sprite _dotSprite;
+    //[SerializeField] private Sprite dotSprite;
 
     //referencias a los GameObjects que tienen las plantillas de los separadores y etiquetas
     private RectTransform _labelTemplateX;
     private RectTransform _labelTemplateY;
     private RectTransform _dashTemplateX;
     private RectTransform _dashTemplateY;
+    private RectTransform _markValueTemplateY;
 
     //listas con los objetos que instancia el ShowGraph para borrarlos si se vuelve a invocar el metodo.
     private List<GameObject> _gameObjects;
@@ -31,31 +33,39 @@ public class Window_Graph : MonoBehaviour
     private List<RectTransform> _yLabelList;
     
     //Valores Cacheados (en una invocacion al ShowGraph)
-    private List<int> _cachedValueList;
+    private List<float> _cachedValueList;
     private IGraphVisual _cachedGraphVisual;
     private int _cachedMaxVisibleAmount;
-    private Func<int, string> _cachedGetAxisLabelX;
+    private Func<float, string> _cachedGetAxisLabelX;
     private Func<float, string> _cachedGetAxisLabelY;
     private float _cachedXSize;
+    private List<float> _cachedXAxisLabelList;
 
+    public RectTransform GetGraphContainer()
+    {
+        return GraphContainer;
+    }
+    
     private void Awake()
     {
         //inicializar estructuras
         _graphVisualObjectList = new List<IGraphVisualObject>();
         _gameObjects = new List<GameObject>();
         _yLabelList = new List<RectTransform>();
+        _cachedXAxisLabelList = new List<float>();
         
         //conseguir referencias a las plantillas
-        _graphContainer = transform.Find("graphContainer").GetComponent<RectTransform>();
+        GraphContainer = transform.Find("graphContainer").GetComponent<RectTransform>();
 
-        _labelTemplateX = _graphContainer.Find("labelTemplateX").GetComponent<RectTransform>();
-        _labelTemplateY = _graphContainer.Find("labelTemplateY").GetComponent<RectTransform>();
+        _labelTemplateX = GraphContainer.Find("labelTemplateX").GetComponent<RectTransform>();
+        _labelTemplateY = GraphContainer.Find("labelTemplateY").GetComponent<RectTransform>();
 
-        _dashTemplateX = _graphContainer.Find("dashTemplateX").GetComponent<RectTransform>();
-        _dashTemplateY = _graphContainer.Find("dashTemplateY").GetComponent<RectTransform>();
-
-        _tooltipGameObject = _graphContainer.Find("Tooltip").gameObject;
+        _dashTemplateX = GraphContainer.Find("dashTemplateX").GetComponent<RectTransform>();
+        _dashTemplateY = GraphContainer.Find("dashTemplateY").GetComponent<RectTransform>();
+        _markValueTemplateY = GraphContainer.Find("markValueTemplateY").GetComponent<RectTransform>();
         
+        _tooltipGameObject = GraphContainer.Find("Tooltip").gameObject;
+
         /*
         //inicializar visualizaciones del grafico (para testeo)
         LineGraphVisual lineGraphVisual =
@@ -90,6 +100,24 @@ public class Window_Graph : MonoBehaviour
         });
         
         */
+    }
+
+    private void OnDisable()
+    {
+        //clean uo
+        foreach (var g in _gameObjects)
+        {
+            Destroy(g);
+        }
+        _gameObjects.Clear();
+        
+        foreach (var graphVisualObject in _graphVisualObjectList)
+        {
+            graphVisualObject.CleanUp();
+        }
+        _graphVisualObjectList.Clear();
+        
+        _yLabelList.Clear();
     }
 
     #region Show/Hide Tooltips
@@ -149,7 +177,7 @@ public class Window_Graph : MonoBehaviour
      * Permite cambiar la funcion que definie a la etiqueta que se muestra en el eje X y vuelve a
      * dibujar el ultimo grafico dibujado usando esa funcion.
      */
-    public void SetGetAxisLabelX(Func<int, string> getAxisLabelX)
+    public void SetGetAxisLabelX(Func<float, string> getAxisLabelX)
     {
         ShowGraph(_cachedValueList, _cachedGraphVisual, _cachedMaxVisibleAmount, getAxisLabelX, _cachedGetAxisLabelY);
     }
@@ -181,8 +209,8 @@ public class Window_Graph : MonoBehaviour
      * la cantidad de elementos maxima a graficar "maxVisibleValueAmount,
      * las funciones que definen que etiquetas mostrar en los ejes X e Y "getAxisLabelX/Y"
      */
-    public void ShowGraph(List<int> valueList, IGraphVisual graphVisual, int maxVisibleValueAmount = -1, 
-        Func<int, string> getAxisLabelX=null, Func<float, string> getAxisLabelY=null)
+    public void ShowGraph(List<float> valueList, IGraphVisual graphVisual, int maxVisibleValueAmount = -1, 
+        Func<float, string> getAxisLabelX=null, Func<float, string> getAxisLabelY=null)
     {
 
         //resetear lista con los objetos previamente instanciados para limpiar un grafico viejo, si lo hay
@@ -207,12 +235,12 @@ public class Window_Graph : MonoBehaviour
         //validar parametros
         if (getAxisLabelX == null)
         {
-            getAxisLabelX = delegate(int i) { return i.ToString();};
+            getAxisLabelX = delegate(float f) { return f.ToString("n2");};
         }
         
         if (getAxisLabelY == null)
         {
-            getAxisLabelY = delegate(float f) { return Mathf.RoundToInt(f).ToString();};
+            getAxisLabelY = delegate(float f) { return f.ToString("n2");};
         }
 
         if (maxVisibleValueAmount <= 0 || maxVisibleValueAmount > valueList.Count)
@@ -232,7 +260,7 @@ public class Window_Graph : MonoBehaviour
          * comenzar la escala. Se busca que el eje Y comienze un poco "mas abajo" del valor minimo y termine un poco
          * "mas arriba" que el valor maximo, para que se vea bien.
          */
-        var sizeDelta = _graphContainer.sizeDelta;
+        var sizeDelta = GraphContainer.sizeDelta;
         float graphHeight = sizeDelta.y;
         float graphWidth = sizeDelta.x; 
         
@@ -248,7 +276,7 @@ public class Window_Graph : MonoBehaviour
         for (int i = 0; i <= yAxisSeparatorCount; i++)
         {
             //instanciar etiqueta en el eje Y
-            RectTransform labelY = Instantiate(_labelTemplateY, _graphContainer, false);
+            RectTransform labelY = Instantiate(_labelTemplateY, GraphContainer, false);
             labelY.gameObject.SetActive(true);
             
             //que tan arriba en el eje Y va a estar porcentualmente
@@ -263,7 +291,7 @@ public class Window_Graph : MonoBehaviour
             _gameObjects.Add(labelY.gameObject);
             
             //Instanciar separador en el eje Y segun la plantilla
-            RectTransform dashY = Instantiate(_dashTemplateY, _graphContainer, false);
+            RectTransform dashY = Instantiate(_dashTemplateY, GraphContainer, false);
             GameObject o;
             (o = dashY.gameObject).SetActive(true);
             dashY.anchoredPosition = new Vector2(_dashTemplateY.anchoredPosition.x, normalizedValue * graphHeight);
@@ -281,14 +309,14 @@ public class Window_Graph : MonoBehaviour
             float yPosition = ((valueList[i] - yMinimum) / (yMaximum - yMinimum)) * graphHeight;
             
             //instanciar etiquta del valor en el eje X
-            RectTransform labelX = Instantiate(_labelTemplateX, _graphContainer, false);
+            RectTransform labelX = Instantiate(_labelTemplateX, GraphContainer, false);
             labelX.gameObject.SetActive(true);
             labelX.anchoredPosition = new Vector2(xPosition, -5f);
             labelX.GetComponent<Text>().text = getAxisLabelX(i);
             _gameObjects.Add(labelX.gameObject);
             
             //Instanciar separador del valor en el eje X
-            RectTransform dashX = Instantiate(_dashTemplateX, _graphContainer, false);
+            RectTransform dashX = Instantiate(_dashTemplateX, GraphContainer, false);
             GameObject o;
             (o = dashX.gameObject).SetActive(true);
             dashX.anchoredPosition = new Vector2(xPosition, _dashTemplateX.anchoredPosition.y);
@@ -306,6 +334,145 @@ public class Window_Graph : MonoBehaviour
         
     }
 
+    public void ShowGraph(List<float> valueList, List<float> xAxisLabelList, IGraphVisual graphVisual, int maxVisibleValueAmount = -1, 
+        Func<float, string> getAxisLabelX=null, Func<float, string> getAxisLabelY=null)
+    {
+        if (xAxisLabelList.Count != valueList.Count)
+        {
+            Debug.LogError("xAxisLabelList debe tener la misma cantidad de elementos que valueList");
+            return;
+        }
+
+        //resetear lista con los objetos previamente instanciados para limpiar un grafico viejo, si lo hay
+        foreach (var g in _gameObjects)
+        {
+            Destroy(g);
+        }
+        _gameObjects.Clear();
+        
+        //resettear GraphVisual en caso de que queden variables asignadas por otros graficos
+        graphVisual.Reset();
+
+        //limpiar la lista de los objetos visuales de graficos viejos.
+        foreach (var graphVisualObject in _graphVisualObjectList)
+        {
+            graphVisualObject.CleanUp();
+        }
+        _graphVisualObjectList.Clear();
+        
+        _yLabelList.Clear();
+        
+        //validar parametros
+        if (getAxisLabelX == null)
+        {
+            getAxisLabelX = delegate(float f) { return f.ToString("n2");};
+        }
+        
+        if (getAxisLabelY == null)
+        {
+            getAxisLabelY = delegate(float f) { return f.ToString("n2");};
+        }
+
+        if (maxVisibleValueAmount <= 0 || maxVisibleValueAmount > valueList.Count)
+        {
+            maxVisibleValueAmount = valueList.Count;
+        }
+        
+        //cachear variables del grafico dibujado
+        _cachedValueList = valueList;
+        _cachedGraphVisual = graphVisual;
+        _cachedGetAxisLabelX = getAxisLabelX;
+        _cachedGetAxisLabelY = getAxisLabelY;
+        _cachedMaxVisibleAmount = maxVisibleValueAmount;
+        _cachedXAxisLabelList = xAxisLabelList;
+        
+        
+        /*
+         * Conseguimos los limites del grafico. Buscamos los valores maximos en el grafico para determinar en que numeros
+         * comenzar la escala. Se busca que el eje Y comienze un poco "mas abajo" del valor minimo y termine un poco
+         * "mas arriba" que el valor maximo, para que se vea bien.
+         */
+        var sizeDelta = GraphContainer.sizeDelta;
+        float graphHeight = sizeDelta.y;
+        float graphWidth = sizeDelta.x; 
+        
+        float xSize = graphWidth / (maxVisibleValueAmount+1);
+        _cachedXSize = xSize;
+
+        float yMinimum, yMaximum;
+        
+        CalculateYScale(out yMinimum, out yMaximum);
+        
+        //primero instanciamos los separadores asi quedan atras del grafico
+        int yAxisSeparatorCount = 20; //la cantidad de etiquetas y separadores en el eje Y
+        for (int i = 0; i <= yAxisSeparatorCount; i++)
+        {
+            //instanciar etiqueta en el eje Y
+            RectTransform labelY = Instantiate(_labelTemplateY, GraphContainer, false);
+            labelY.gameObject.SetActive(true);
+            
+            //que tan arriba en el eje Y va a estar porcentualmente
+            float normalizedValue = i * 1f / yAxisSeparatorCount; 
+            labelY.anchoredPosition = new Vector2(-5f, normalizedValue * graphHeight);
+            
+            //poner el texto definido por la funcion getAxisLabel en la etiqueta. El parametro enviado es el valor en Y
+            //por el que pasa el separador.
+            labelY.GetComponent<Text>().text = getAxisLabelY(yMinimum + (normalizedValue * (yMaximum-yMinimum)));
+            
+            _yLabelList.Add(labelY);
+            _gameObjects.Add(labelY.gameObject);
+            
+            //Instanciar separador en el eje Y segun la plantilla
+            RectTransform dashY = Instantiate(_dashTemplateY, GraphContainer, false);
+            GameObject o;
+            (o = dashY.gameObject).SetActive(true);
+            dashY.anchoredPosition = new Vector2(_dashTemplateY.anchoredPosition.x, normalizedValue * graphHeight);
+            
+            _gameObjects.Add(o);
+        }
+
+        int xAxisSeparatorCountAux = Math.Min(20, xAxisLabelList.Count);
+        int separateXAxisEvery = (int) Math.Ceiling(((float)xAxisLabelList.Count / (float)xAxisSeparatorCountAux));
+        int pointsUntilNextSeparator = 0;
+        //Para cada valor de la lista, considerando la cantidad maxima a mostrar...
+        int xIndex = 0;
+        for (int i = Mathf.Max(valueList.Count - maxVisibleValueAmount, 0); i < valueList.Count; i++)
+        {
+            //en que posicion del grafico se grafica el valor?
+            float xPosition = xSize + xIndex * xSize;
+            float yPosition = ((valueList[i] - yMinimum) / (yMaximum - yMinimum)) * graphHeight;
+            
+            if (pointsUntilNextSeparator == 0)
+            {
+                //instanciar etiquta del valor en el eje X
+                RectTransform labelX = Instantiate(_labelTemplateX, GraphContainer, false);
+                labelX.gameObject.SetActive(true);
+                labelX.anchoredPosition = new Vector2(xPosition, -5f);
+                labelX.GetComponent<Text>().text = getAxisLabelX(xAxisLabelList[i]);
+                _gameObjects.Add(labelX.gameObject);
+
+                //Instanciar separador del valor en el eje X
+                RectTransform dashX = Instantiate(_dashTemplateX, GraphContainer, false);
+                GameObject o;
+                (o = dashX.gameObject).SetActive(true);
+                dashX.anchoredPosition = new Vector2(xPosition, _dashTemplateX.anchoredPosition.y);
+                _gameObjects.Add(o);
+
+                pointsUntilNextSeparator = separateXAxisEvery;
+            }
+    
+            //instanciar objeto visual del grafico (ej: barra o punto.) y configurar su tooltip. 
+            string tooltipText = "(" + getAxisLabelX(xAxisLabelList[i]) + ", " + getAxisLabelY(valueList[i]) + ")";
+            
+            _graphVisualObjectList.Add(graphVisual.CreateGraphVisualObject(
+                new Vector2(xPosition, yPosition), xSize, tooltipText)
+            ); //tambien agregar el objeto visual a la lista de objetos visuales.
+
+            xIndex++;
+            pointsUntilNextSeparator--;
+        }
+    }
+    
     /*
      * Actualiza el valor en el indice "index" de la lista de valores con un nuevo valor "value"
      */
@@ -323,7 +490,7 @@ public class Window_Graph : MonoBehaviour
         
         _cachedValueList[index] = value;
         
-        float graphHeight = _graphContainer.sizeDelta.y;
+        float graphHeight = GraphContainer.sizeDelta.y;
         //float graphWidth = _graphContainer.sizeDelta.x;
 
         //calculamos la escala luego de la modificacion
@@ -377,6 +544,11 @@ public class Window_Graph : MonoBehaviour
      */
     private void CalculateYScale(out float yMinimum, out float yMaximum)
     {
+        if (_cachedValueList.Count == 0)
+        {
+            yMaximum = yMinimum = 0;
+            return;
+        }
         yMaximum = _cachedValueList[0];
         yMinimum = _cachedValueList[0];
         
@@ -408,6 +580,31 @@ public class Window_Graph : MonoBehaviour
         {
             yMinimum = 0f; 
         }
+    }
+
+    private void CalculateXScale(out float xMin, out float xMax)
+    {
+        xMax = _cachedXAxisLabelList[0];
+        xMin = _cachedXAxisLabelList[0];
+        
+        for (int i = Mathf.Max(_cachedXAxisLabelList.Count - _cachedMaxVisibleAmount, 0); i < _cachedXAxisLabelList.Count; i++)
+        {
+            if (_cachedXAxisLabelList[i] > xMax)
+            {
+                xMax = _cachedXAxisLabelList[i];
+            }
+            if (_cachedXAxisLabelList[i] < xMin)
+            {
+                xMin = _cachedXAxisLabelList[i];
+            }
+        }
+
+        if (_startYScaleAtZero)
+            //empezar el grafico en y=0, independientemente del valor minimo en la lista
+        {
+            xMin = 0f; 
+        }
+        
     }
     #endregion
     

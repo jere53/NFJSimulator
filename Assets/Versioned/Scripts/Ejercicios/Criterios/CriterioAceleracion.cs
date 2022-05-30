@@ -14,6 +14,7 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
 
     private List<Tuple<float, float, float, float, float>> _infracciones = new List<Tuple<float, float, float, float, float>>(); 
     //tiempo, Along, Alat, Avert, Amax
+    private List<Tuple<float, float, float, float, float>> _aceleracionesEnTiempo = new List<Tuple<float, float, float, float, float>>(); 
 
     public float granularidad = 4; //tiempo minimo en segundos desde la ultima notificacion para hacer otra notificacion 
     private float _tiemerGranularidad;
@@ -38,6 +39,7 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
         if (_tiemerGranularidad > 0f)
         {
             _tiemerGranularidad -= Time.fixedDeltaTime;
+
             return;
         }
 
@@ -47,16 +49,28 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
         {
             _infracciones.Add(new Tuple<float, float, float, float, float>(_tiempoActual, _vehicle.longitudinalG, 
                 _vehicle.lateralG, _vehicle.verticalG, maximaAceleracion));
+            
+            _aceleracionesEnTiempo.Add(new Tuple<float, float, float, float, float>(_tiempoActual, _vehicle.longitudinalG, 
+                _vehicle.lateralG, _vehicle.verticalG, maximaAceleracion));
+        
+            _tiemerGranularidad = granularidad;
+            
+            return;
 
             //Debug.Log("exceso en la aceleracion! detectados" + _vehicle.longitudinalG + "; " + _vehicle.lateralG +";" + _vehicle.verticalG + " max aceleracion = " + maximaAceleracion);
-
-            _tiemerGranularidad = granularidad;
         }
+        
+        _aceleracionesEnTiempo.Add(new Tuple<float, float, float, float, float>(_tiempoActual, _vehicle.longitudinalG, 
+            _vehicle.lateralG, _vehicle.verticalG, maximaAceleracion));
+        
+        _tiemerGranularidad = granularidad;
     }
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {
-        datos.DatosCriterioAceleracion = _infracciones;
+        datos.DatosCriterioAceleracion = new DatosCriterioAceleracion();
+        datos.DatosCriterioAceleracion.AceleracionesEnTiempo = _aceleracionesEnTiempo;
+        datos.DatosCriterioAceleracion.Infracciones = _infracciones;
     }
 
     public void ComenzarEvaluacion()
