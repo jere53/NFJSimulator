@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
-
 public interface ICriterio
 {
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos);
@@ -14,33 +15,104 @@ public interface ICriterio
     public void Remover();
 }
 
+public class DatosCriterioNafta
+{
+    public float LitrosConsumidos;
+    public float ObjetivoListrosConsumidos;
+    public List<Tuple<float, float>> ConsumoInstantaneo;
+
+    public List<Tuple<float, float>> ConstumoAccum;
+    //tiempo, consumo
+    
+    public DatosCriterioNafta()
+    {
+        ConstumoAccum = new List<Tuple<float, float>>();
+        ConsumoInstantaneo = new List<Tuple<float, float>>();
+        LitrosConsumidos = 0;
+        ObjetivoListrosConsumidos = 0;
+    }
+}
+
+public class DatosCriterioRpm
+{
+    public List<Tuple<float, int, int, int, bool>> Infracciones;
+    //_tiempoActual, rpmActuales, minimoRPM, maximoRPM, corrigioInfraccion
+    public List<Tuple<float, float>> RpmEnTiempo;
+
+    public DatosCriterioRpm()
+    {
+        Infracciones = new List<Tuple<float, int, int, int, bool>>();
+        RpmEnTiempo = new List<Tuple<float, float>>();
+    }
+    
+}
+
+public class DatosCriterioVelocidad
+{
+    public List<Tuple<float, float, bool>> Infracciones;
+    //List<_tiempoActual, velocidadActual, corrigioInfraccion>
+
+    public List<Tuple<float, float>> VelocidadEnTiempo;
+
+    public float VelocidadMaxima;
+
+    public DatosCriterioVelocidad()
+    {
+        Infracciones = new List<Tuple<float, float, bool>>();
+        VelocidadEnTiempo = new List<Tuple<float, float>>();
+        VelocidadMaxima = 0f;
+    }
+}
+
+public class DatosCriterioVolantazos
+{
+    public List<Tuple<float, float, float>> Infracciones;
+    //_tiempoActual, doblajeRealizado, doblajeMaximo
+
+    public List<Tuple<float, float>> YawEnTiempo;
+
+    public DatosCriterioVolantazos()
+    {
+        Infracciones = new List<Tuple<float, float, float>>();
+        YawEnTiempo = new List<Tuple<float, float>>();
+    }
+}
+
+public class DatosCriterioAceleracion
+{
+    public List<Tuple<float, float, float, float, float>> AceleracionesEnTiempo = null;
+    //_timepoActual, Along, Alat, Avert, Amax
+
+    public List<Tuple<float, float, float, float, float>> Infracciones = null;
+
+    public DatosCriterioAceleracion()
+    {
+        AceleracionesEnTiempo = new List<Tuple<float, float, float, float, float>>();
+        Infracciones = new List<Tuple<float, float, float, float, float>>();
+    }
+}
+
 public class DatosEvaluacion
 {
     public Tuple<TimeSpan, TimeSpan> DatosCriterioTiempo = null;
     //TiempoEvaluado, TiempoMaximo
-    
-    public List<Tuple<float, float, bool>> DatosCriterioVelocidadMaxima = null;
-    //List<_tiempoActual, velocidadActual, corrigioInfraccion>
-    
+
     public List<float> DatosCriterioRespetarSemaforos = null;
     //List<_tiempoActual> (de la infraccion)
-    
-    
-    public Tuple<float, float> DatosCriterioNafta = null;
-    //_litrosConsumidos, _objetivoLitrosConsumidos 
-    
+
+    public DatosCriterioNafta DatosCriterioNafta;
+
+    public DatosCriterioRpm DatosCriterioRpm;
+
+    public DatosCriterioVelocidad DatosCriterioVelocidad;
+
+    public DatosCriterioVolantazos DatosCriterioVolantazos;
+
+    public DatosCriterioAceleracion DatosCriterioAceleracion;
+
     public Tuple<List<float>, List<Tuple<float, int>>> DatosCriterioEvitarAccidentes = null;
     //List<_tiempoActual> (peatones), List<_tiempoActual, InstanceID> (vehiculos)
-    
-    public List<Tuple<float, int, int, int, bool>> DatosCriterioRPM = null;
-    //_tiempoActual, rpmActuales, minimoRPM, maximoRPM, corrigioInfraccion
 
-    public List<Tuple<float, float, float, float, float>> DatosCriterioAceleracion = null;
-    //_timepoActual, Along, Alat, Avert, Amax
-    
-    public List<Tuple<float, float, float>> DatosCriterioVolantazo = null;
-    //_tiempoActual, doblajeRealizado, doblajeMaximo, granularidad
-    
     public void Presentar()
     {
         PresentarTiempo();
@@ -80,11 +152,11 @@ public class DatosEvaluacion
 
     void PresentarVelocidadMaxima()
     {
-        if(DatosCriterioVelocidadMaxima == null) return;
+        if(DatosCriterioVelocidad == null) return;
         
         Debug.Log("Se detectaron los siguientes excesos de velocidad:");
         
-        foreach (var infraccion in DatosCriterioVelocidadMaxima)
+        foreach (var infraccion in DatosCriterioVelocidad.Infracciones)
         {
             if (infraccion.Item3) //si comenzo una infraccion
             {
@@ -115,8 +187,8 @@ public class DatosEvaluacion
     {
         if (DatosCriterioNafta == null) return;
         
-        float litrosConsumidos = DatosCriterioNafta.Item1;
-        float objetivoLitrosConsumidos = DatosCriterioNafta.Item2;
+        float litrosConsumidos = DatosCriterioNafta.LitrosConsumidos;
+        float objetivoLitrosConsumidos = DatosCriterioNafta.ObjetivoListrosConsumidos;
         
         string resultado = "El objetivo de consumo de combustible eran: " + objetivoLitrosConsumidos + " litros."
                                    + '\n' + "El Evaluado consumio " + litrosConsumidos + " litros";
@@ -146,11 +218,11 @@ public class DatosEvaluacion
 
     void PresentarRPM()
     {
-        if(DatosCriterioRPM == null) return;
+        if(DatosCriterioRpm == null) return;
         
         Debug.Log("Se detectaron las siguientes faltas en RPM:");
         
-        foreach (var infraccion in DatosCriterioRPM)
+        foreach (var infraccion in DatosCriterioRpm.Infracciones)
         {
             if (infraccion.Item5) //si comenzo una infraccion
             {
@@ -173,7 +245,7 @@ public class DatosEvaluacion
 
         Debug.Log("Se detectaron los siguientes errores respecto a la aceleracion: ");
 
-        foreach (var infraccion in DatosCriterioAceleracion)
+        foreach (var infraccion in DatosCriterioAceleracion.Infracciones)
         {
             Debug.Log("La aceleracion maxima, en Gs, era: " + infraccion.Item5 + "\n");
             Debug.Log("Las aceleraciones registradas al momento " + infraccion.Item1 + 
@@ -184,12 +256,42 @@ public class DatosEvaluacion
 
     void PresentarVolantazo()
     {
+        if (DatosCriterioVolantazos == null) return;
         Debug.Log("Volantazos: ");
-        foreach (var infraccion in DatosCriterioVolantazo)
+        foreach (var infraccion in DatosCriterioVolantazos.Infracciones)
         {
             Debug.Log("En el momento " + infraccion.Item1 + " se dio un volantazo de " + 
                       infraccion.Item2 + " radianes/seg." +
                       "El maximo volantazo seguro en esa cantidad de segundos era " + infraccion.Item3 + "rads/s \n");
         }
+    }
+
+    public void GuardarEnDisco(string path)
+    {
+        string output = JsonConvert.SerializeObject(this);
+        try
+        {
+            File.WriteAllText(path, output);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(exception);
+        }
+    }
+
+    public static DatosEvaluacion CargarDeDisco(string path)
+    {
+        DatosEvaluacion res = new DatosEvaluacion();
+        try
+        {
+            var inputString = File.ReadAllText(path);
+            res = JsonConvert.DeserializeObject<DatosEvaluacion>(inputString);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning("Se produjo un error al intentar cargar el archivo");
+            Debug.LogWarning(exception);
+        }
+        return res;
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VehiclePhysics;
 using VehiclePhysics.UI;
 
@@ -18,6 +19,8 @@ public class MenuPausa : EscapeDialog
     public GameObject condiciones;
     public GameObject ejercicios;
     public GameObject princial;
+    public GameObject evaluacionActual;
+    public GameObject accidentes;
 
     void Update ()
     {
@@ -63,7 +66,9 @@ public class MenuPausa : EscapeDialog
     {
         condiciones.SetActive(false);
         ejercicios.SetActive(false);
+        evaluacionActual.SetActive(false);
         princial.SetActive(true);
+        accidentes.SetActive(false);
     }
     
     public void Condiciones()
@@ -77,9 +82,25 @@ public class MenuPausa : EscapeDialog
         princial.SetActive(false);
         ejercicios.SetActive(true);
     }
-    
+
+    public void EvaluacionActual()
+    {
+        princial.SetActive(false);
+        evaluacionActual.SetActive(true);
+    }
+
+    public void MenuAccidentes()
+    {
+        princial.SetActive(false);
+        accidentes.SetActive(true);
+    }
     public void Quit()
     {
         Application.Quit();
+    }
+
+    public void IrADebriefing()
+    {
+        SceneManager.LoadScene(1);
     }
 }

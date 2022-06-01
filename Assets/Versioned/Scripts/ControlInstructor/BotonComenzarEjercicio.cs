@@ -35,15 +35,33 @@ public class BotonComenzarEjercicio : MonoBehaviour
 
     public void ComenzarEjercicio()
     {
-        simController.ComenzarEjercicio((_seleccionEjercicio.value - 1),
-            _toggleTiempo.isOn, int.Parse(_maxMinutos.text),int.Parse(_maxSegundos.text), 
-            _toggleConsumo.isOn, int.Parse(_maxCombustible.text), 
-            _toggleVelocidad.isOn, int.Parse(_maxVelocidad.text),
-            _toggleSemaforos.isOn, 
-            _toggleAccidentes.isOn,
-            _toggleVolantazos.isOn, float.Parse(_maximoDoblaje.text), 
-            _toggleAceleracion.isOn, float.Parse(_maxAceleracion.text),
-            _toggleRPM.isOn, int.Parse(_minRPM.text), int.Parse(_maxRPM.text));
+        SeleccionCriterios seleccionCriterios = new SeleccionCriterios();
+
+        seleccionCriterios.Tiempo.Evaluar = _toggleTiempo.isOn;
+        seleccionCriterios.Tiempo.MaxMinutos = int.Parse(_maxMinutos.text);
+        seleccionCriterios.Tiempo.MaxSegundos = int.Parse(_maxSegundos.text);
+
+        seleccionCriterios.Combustible.Evaluar = _toggleConsumo.isOn;
+        seleccionCriterios.Combustible.MaxLitros = int.Parse(_maxCombustible.text);
+
+        seleccionCriterios.Velocidad.Evaluar = _toggleVelocidad.isOn;
+        seleccionCriterios.Velocidad.MaxVelocidad = int.Parse(_maxVelocidad.text);
+
+        seleccionCriterios.Semaforos.Evaluar = _toggleSemaforos.isOn;
+
+        seleccionCriterios.Accidentes.Evaluar = _toggleAccidentes.isOn;
+
+        seleccionCriterios.Volantazos.Evaluar = _toggleVolantazos.isOn;
+        seleccionCriterios.Volantazos.MaxDoblaje = float.Parse(_maximoDoblaje.text);
+
+        seleccionCriterios.Aceleracion.Evaluar = _toggleAceleracion.isOn;
+        seleccionCriterios.Aceleracion.MaxAceleracion = float.Parse(_maxAceleracion.text);
+
+        seleccionCriterios.Rpm.Evaluar = _toggleRPM.isOn;
+        seleccionCriterios.Rpm.MaxRpm = int.Parse(_maxRPM.text);
+        seleccionCriterios.Rpm.MinRpm = int.Parse(_minRPM.text);
+        
+        simController.ComenzarEvaluacion(seleccionCriterios);
     }
 
 }

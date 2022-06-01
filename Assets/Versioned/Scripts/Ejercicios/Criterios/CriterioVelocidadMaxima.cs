@@ -12,6 +12,8 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
     private VehicleBase _vehicle;
     
     private List<Tuple<float, float, bool>> _infracciones = new List<Tuple<float, float, bool>>();
+
+    private List<Tuple<float, float>> _velocidadesEnTiempo = new List<Tuple<float, float>>();
     
     private float _tiempoActual;
 
@@ -20,6 +22,8 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
     public float granularidad = 4; //cada cuantos segundos registrar la velocidad, si esta en exceso. 
 
     private float _tiempoHastaMedida = 0f;
+
+    private float _timerGranularidad;
 
 
     private void Awake()
@@ -51,6 +55,10 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
             {
                 _infracciones.Add(new Tuple<float, float, bool >(_tiempoActual, velocidadActual, true));
                 _tiempoHastaMedida = granularidad;
+                
+                _velocidadesEnTiempo.Add(new Tuple<float, float>(_tiempoActual, velocidadActual));
+
+                _timerGranularidad = granularidad;
             }
             else
             {
@@ -67,16 +75,30 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
             _tiempoHastaMedida = 0f;
         }
         
+        if (_timerGranularidad > 0f)
+        {
+            _timerGranularidad -= Time.deltaTime;
+
+            return;
+        }
+        
+        _velocidadesEnTiempo.Add(new Tuple<float, float>(_tiempoActual, velocidadActual));
+
+        _timerGranularidad = granularidad;
     }
     
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion resultado)
     {
-        resultado.DatosCriterioVelocidadMaxima = _infracciones;
+        resultado.DatosCriterioVelocidad = new DatosCriterioVelocidad();
+        resultado.DatosCriterioVelocidad.Infracciones= _infracciones;
+        resultado.DatosCriterioVelocidad.VelocidadEnTiempo = _velocidadesEnTiempo;
+        resultado.DatosCriterioVelocidad.VelocidadMaxima = velocidadMaximaKMh;
     }
 
     public void ComenzarEvaluacion()
     {
+        _velocidadesEnTiempo.Clear();
         _infracciones.Clear();
         enabled = true;
         _tiempoActual = 0;

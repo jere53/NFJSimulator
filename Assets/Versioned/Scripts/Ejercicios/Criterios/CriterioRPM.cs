@@ -9,7 +9,7 @@ public class CriterioRPM : MonoBehaviour, ICriterio
     public int minimoRpm;
     public int maximoRpm;
     
-    private List<Tuple<float, int, int, int, bool>> _infracciones = new List<Tuple<float, int, int, int, bool>>();
+    private List<Tuple<float, int, int, int, bool>> _infracciones;
     
     private float _tiempoActual;
 
@@ -19,7 +19,11 @@ public class CriterioRPM : MonoBehaviour, ICriterio
 
     private float _tiempoHastaMedida = 0f;
 
+    private float _timerGranularidad;
+    
     private VPVehicleController _vehicle;
+
+    private List<Tuple<float, float>> _rpmEnTiempo;
 
     private void Awake()
     {
@@ -44,9 +48,9 @@ public class CriterioRPM : MonoBehaviour, ICriterio
             (_vehicle.data.Get(Channel.Vehicle, VehicleData.EngineRpm) / 1000);
         
         
-        //Para no guardar muchos datos innecesarios, tenemos el flag enInfraccion. Cuando se detecta un exceso de velocidad,
-        //se marca el comienzo de la infraccion y se registran las velocidades en exceso cada approx. <granularidad> segundos.
-        //Cuando se vuelva a los confines de la velocidadMaxima, se resettea el flag enInfraccion.
+        //Para no guardar muchos datos innecesarios, tenemos el flag enInfraccion. Cuando se detecta un exceso de rpm,
+        //se marca el comienzo de la infraccion y se registran las rpm en exceso cada approx. <granularidad> segundos.
+        //Cuando se vuelva a los confines de las rpm maximas, se resettea el flag enInfraccion.
         
         if (rpmActuales < minimoRpm || rpmActuales > maximoRpm)
         {
@@ -56,6 +60,9 @@ public class CriterioRPM : MonoBehaviour, ICriterio
                 _infracciones.Add(new Tuple<float, int, int, int, bool >(_tiempoActual, minimoRpm, maximoRpm, rpmActuales, true));
                 //Debug.Log("Infraccion RPM detectada! minimo/maximo = " + minimoRpm+";"+maximoRpm+" detectadas " + rpmActuales );
                 _tiempoHastaMedida = granularidad;
+                
+                _rpmEnTiempo.Add(new Tuple<float, float>(_tiempoActual, rpmActuales));
+                _timerGranularidad = granularidad;
             }
             else
             {
@@ -71,17 +78,31 @@ public class CriterioRPM : MonoBehaviour, ICriterio
             _enInfraccion = false;
             _tiempoHastaMedida = 0f;
         }
+        
+        if (_timerGranularidad > 0f)
+        {
+            _timerGranularidad -= Time.deltaTime;
+
+            return;
+        }
+
+        _timerGranularidad = granularidad;
+        
+        _rpmEnTiempo.Add(new Tuple<float, float>(_tiempoActual, rpmActuales));
 
     }
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {
-        datos.DatosCriterioRPM = _infracciones;
+        datos.DatosCriterioRpm = new DatosCriterioRpm();
+        datos.DatosCriterioRpm.Infracciones = _infracciones;
+        datos.DatosCriterioRpm.RpmEnTiempo = _rpmEnTiempo;
     }
 
     public void ComenzarEvaluacion()
     {
-        _infracciones.Clear();
+        _infracciones = new List<Tuple<float, int, int, int, bool>>();
+        _rpmEnTiempo = new List<Tuple<float, float>>();
         enabled = true;
         _tiempoActual = 0;
         _enInfraccion = false;
