@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Playback.unity
-    guid: 0dbf2490c96edaf4da74316b87bfb4c3
+    path: Assets/Unversioned/dev_presentador/dev_presentador.unity
+    guid: 652427946c6db00469ed8874e2ca3604
+  - enabled: 1
+    path: Assets/Unversioned/dev_presentador/Menu Debriefing.unity
+    guid: b374fde811ea9ba438e8d3ca33bd6eb7
   m_configObjects: {}
