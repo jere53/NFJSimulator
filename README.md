@@ -56,4 +56,6 @@ La rama "baseline" contiene la baseline del proyecto.
 
 La rama "nfjsimulator_v1.1" es la rama base para el trabajo realizado durante el Sprint 1. Sera el destino de los Pull Request duante el Sprint 1.
 
-Las ramas que se creen para el trabajo durante el Sprint 1 deben ser ramas de "nfjsimulator_v1.1". Para esto, al crear la rama en la terminal escribir "git checkout -b <nombre_Rama> nfjsimulator_v1.1". Esto hara que se branchee desde "nfjsimulator_v1.1" y no desde "main". nfjsimulator_v1.1 se configuro como rama por defecto.
+Las ramas para el Program Increment planeado sale de "nfjsimulator_v1.1". nfjsimulator_v1.1 sera el "main" sobre el cual se desarrollaran las funcionalidades. Para cada iteracion, se creara una rama llamada "iteracionX_base", donde X es el numero de iteracion. Para comenzar a desarrollar una funcionalidad, primero branchear desde la rama base de esa iteracion la rama sobre la cual se hara el desarrollo: "git checkout -b <nombre_Rama> iteracionX_base". Esto hara que se branchee desde "iteracionX_base" y no desde "nfjsimulator_v1.1". 
+
+nfjsimulator_v1.1 se configuro como rama por defecto.
