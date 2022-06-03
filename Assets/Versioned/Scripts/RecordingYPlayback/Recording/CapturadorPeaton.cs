@@ -15,7 +15,7 @@ public class CapturadorPeaton : MonoBehaviour
     private void Awake()
     {
         id = numeroPeaton;
-        Recorder.instancia.modelosPeatones.Add(modelo);
+        RecordingManager.Instance.PedestrianModelIdList.Add(modelo);
         numeroPeaton++;
         navMesh = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
@@ -23,21 +23,21 @@ public class CapturadorPeaton : MonoBehaviour
     
     private void OnEnable()
     {
-        Recorder.instancia.OnCapture += CargarSnapshot;
+        RecordingManager.Instance.OnCaptureSnapshot += CargarSnapshot;
     }
     void OnDisable()
     {
-        Recorder.instancia.OnCapture -= CargarSnapshot;
+        RecordingManager.Instance.OnCaptureSnapshot -= CargarSnapshot;
     }
 
-    public void CargarSnapshot()
+    public void CargarSnapshot(Recorder recorder)
     {
         SnapshotPeaton snap = new SnapshotPeaton();
         snap._transform = transform;
         snap.velocidad = navMesh.speed;
         bool estaMuerto = _animator.GetCurrentAnimatorStateInfo(0).IsName("Atropellado");
         snap.estaMuerto = estaMuerto;
-        Recorder.instancia.capturasPeatones.Add(id, snap);
+        recorder.capturasPeatones.Add(id, snap);
     }
 
 }

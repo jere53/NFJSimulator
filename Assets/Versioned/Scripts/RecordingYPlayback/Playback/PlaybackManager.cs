@@ -43,12 +43,15 @@ public class PlaybackManager : MonoBehaviour
         if (play)
         {
             SpawnearEIndexarGrabados();
+            Debug.Log("Spawned");
             using (BinaryReader reader = new BinaryReader(File.Open(pathToRecording, FileMode.Open)))
             {
                 CargarGrabacion(0, cantidadIntervalos, _estructuraGrabacion.grabacion, reader);
             }
 
-            CargarGrabacionClima();
+            Debug.Log("loaded");
+
+            //CargarGrabacionClima();
             play = false;
             /*
             foreach (var interseccion in intersecciones)
@@ -58,7 +61,7 @@ public class PlaybackManager : MonoBehaviour
             }
             */
             StartCoroutine(Play());
-            StartCoroutine(PlayClimaAndToD());
+            //StartCoroutine(PlayClimaAndToD());
         }
     }
 
@@ -129,6 +132,8 @@ public class PlaybackManager : MonoBehaviour
             
             recordingFps = reader.ReadInt32();
             cantidadIntervalos = reader.ReadInt32();
+
+            Debug.Log(cantidadPeatones+ " " + cantidadVehiculos + " " + cantidadIntervalos);
 
         }
     }
@@ -307,6 +312,7 @@ public class PlaybackManager : MonoBehaviour
         */
         
         float deltaIntervalos = 1f/recordingFps;
+        Debug.Log("Intervalos: " + cantidadIntervalos+ "delta Intervalos" + deltaIntervalos);
 
         for (int intervalo = 0; intervalo < cantidadIntervalos; intervalo++)
         {

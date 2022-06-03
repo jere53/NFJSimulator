@@ -12,7 +12,6 @@ public class MenuPausa : EscapeDialog
 
     public VPStandardInput controlVehiculo;
     public WeatherController controlClima;
-    public CapturadorTrainee controlGrabacion;
     
     
     public GameObject uiMenuPausa;
@@ -21,6 +20,7 @@ public class MenuPausa : EscapeDialog
     public GameObject princial;
     public GameObject evaluacionActual;
     public GameObject accidentes;
+    public GameObject grabacion;
 
     void Update ()
     {
@@ -45,7 +45,6 @@ public class MenuPausa : EscapeDialog
         Time.timeScale = 0f;
         AudioListener.pause = true;
         estaPausado = true;
-        controlGrabacion.enabled = false;
         controlClima.enabled = false;
         controlVehiculo.enabled = false;
     }
@@ -56,7 +55,6 @@ public class MenuPausa : EscapeDialog
         Time.timeScale = 1f;
         AudioListener.pause = false;
         estaPausado = false;
-        controlGrabacion.enabled = true;
         controlClima.enabled = true;
         controlVehiculo.enabled = true;
     }
@@ -69,6 +67,7 @@ public class MenuPausa : EscapeDialog
         evaluacionActual.SetActive(false);
         princial.SetActive(true);
         accidentes.SetActive(false);
+        grabacion.SetActive(false);
     }
     
     public void Condiciones()
@@ -102,5 +101,21 @@ public class MenuPausa : EscapeDialog
     public void IrADebriefing()
     {
         SceneManager.LoadScene(1);
+    }
+
+    public void MenuGrabacion()
+    {
+        princial.SetActive(false);
+        grabacion.SetActive(true);
+    }
+
+    public void StartRecording()
+    {
+        RecordingManager.Instance.StartRecording();
+    }
+
+    public void StopRecording()
+    {
+        RecordingManager.Instance.StopRecording();
     }
 }

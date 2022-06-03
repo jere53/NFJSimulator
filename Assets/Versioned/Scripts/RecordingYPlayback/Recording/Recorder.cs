@@ -30,7 +30,7 @@ public class Recorder: MonoBehaviour
     private Coroutine c1;
     private Coroutine c2;
     private bool estaGrabando;
-    private int fps;
+    public int fps;
 
     public delegate void CaptureFrame();
     public event CaptureFrame OnCapture;
@@ -92,14 +92,6 @@ public class Recorder: MonoBehaviour
         capturasPeatones = new Dictionary<int, SnapshotPeaton>();
     }
 
-    public void GrabacionManager(int fps, int fpsClima)
-    {
-        if(estaGrabando)
-            _instance.PararDeGrabar();
-        else
-            _instance.Grabar(fps, fpsClima);
-    }
-
     private void Grabar(int fps, int fpsClima)
     {
         Debug.Log("Comenzo la grabacion");
@@ -114,7 +106,7 @@ public class Recorder: MonoBehaviour
         
     }
 
-    private void PararDeGrabar()
+    public void PararDeGrabar()
     {
         estaGrabando = false;
         StopCoroutine(c1);
@@ -196,6 +188,16 @@ public class Recorder: MonoBehaviour
         return retorno;
     }
 
+    public void RecordSnapshots()
+    {
+        escribirArchivo();
+
+        indiceIntervalo++;
+        capturasVehiculos.Clear();
+        capturasPeatones.Clear();
+        colorSemaforos.Clear();
+    }
+    
     IEnumerator CorutinaGrabacion(float time)
     {
         while (true)
@@ -213,6 +215,27 @@ public class Recorder: MonoBehaviour
         }
     }
 
+    public void RecordWeatherAndToD()
+    {
+        String clima = instanciaClima.currentWeatherPreset;
+        switch (clima)
+        {
+            case"sunny":
+                _writerClima.Write(0);
+                break;                
+            case"rain":
+                _writerClima.Write(1);
+                break;                
+            case"cloudy":
+                _writerClima.Write(2);
+                break;
+        }
+
+        float hora = instanciaCicloDia.timeOfDay;
+        float velocidadOrbita = instanciaCicloDia.orbitSpeed;
+        _writerClima.Write(hora);
+        _writerClima.Write(velocidadOrbita);
+    }
     IEnumerator CorutinaClima(float time)
     {
         while (true)
@@ -251,7 +274,7 @@ public class Recorder: MonoBehaviour
         capturasPeatones.Clear();
     }
         
-    private void escribirArchivo()
+    public void escribirArchivo()
     {
         escribirTransform(capturaTrainee._transform);
         escribirTransform(capturaTrainee.ruedaFL);
@@ -298,7 +321,7 @@ public class Recorder: MonoBehaviour
         _writer.Write(rotation.eulerAngles.z);
     }
 
-    private void escribirHeader()
+    public void escribirHeader()
     {
         _writerHeader.Write(modelosVehiculos.Count);
         foreach (int modelo in modelosVehiculos)
@@ -325,5 +348,12 @@ public class Recorder: MonoBehaviour
         _writerHeader.Write(cantidadSemaforos);
         _writerHeader.Write(fps);
         _writerHeader.Write(indiceIntervalo);
+    }
+
+    public void DisposeFS()
+    {
+        fsClima.Dispose();
+        fsHeader.Dispose();
+        fs.Dispose();
     }
 }
