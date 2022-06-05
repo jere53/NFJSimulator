@@ -24,21 +24,6 @@ public class CapturadorTrainee : MonoBehaviour
         RecordingManager.Instance.OnCaptureSnapshot -= CargarSnapshot;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            if (RecordingManager.Instance.isRecording)
-            {
-                RecordingManager.Instance.StopRecording();
-            }
-            else
-            {
-                RecordingManager.Instance.StartRecording();
-            }
-        }
-    }
-
     public void CargarSnapshot(Recorder recorder)
     {
         SnapshotTrainee snap = new SnapshotTrainee();

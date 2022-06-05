@@ -69,6 +69,8 @@ public class Semaforo : MonoBehaviour
 
     public void RojoInmediato()
     {
+        if (luzActual == 0) return;
+        
         ApagarLuces(verde);
         ApagarLuces(amarillo);
         PrenderLuces(rojo);
@@ -83,6 +85,8 @@ public class Semaforo : MonoBehaviour
     
     public void VerdeInmediato()
     {
+        if (luzActual == 2) return;
+        
         ApagarLuces(rojo);
         ApagarLuces(amarillo);
         PrenderLuces(verde);
@@ -97,6 +101,7 @@ public class Semaforo : MonoBehaviour
     
     public void AmarilloInmediato()
     {
+        if(luzActual == 1) return;
         ApagarLuces(rojo);
         ApagarLuces(verde);
         PrenderLuces(amarillo);

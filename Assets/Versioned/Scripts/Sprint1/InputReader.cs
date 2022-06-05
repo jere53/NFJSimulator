@@ -17,11 +17,6 @@ public class InputReader : MonoBehaviour
     
 
     // Start is called before the first frame update
-    void Start()
-    {
-        Recorder = Recorder.instancia;
-    }
-
     // Update is called once per frame
     void Update()
     {

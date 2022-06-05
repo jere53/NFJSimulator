@@ -30,7 +30,7 @@ public class DebrieferPresenter : MonoBehaviour
         FileBrowser.SetFilters(true, new FileBrowser.Filter("JSONs", ".json"));
         FileBrowser.SetDefaultFilter(".json");
         FileBrowser.ShowLoadDialog(OnFileBrowserSuccess, null, FileBrowser.PickMode.Files,
-            false, _pathToMyDocuments, null, "Load", "Select");
+            false, _pathToMyDocuments);
     }
 
     void OnFileBrowserSuccess(string[] paths)

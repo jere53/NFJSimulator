@@ -7,7 +7,7 @@ using UnityEngine;
 public class RecordingManager : MonoBehaviour
 {
     
-    private Recorder recorder;
+    [SerializeField] private Recorder recorder;
     
     private static RecordingManager _instance;
     public static RecordingManager Instance
@@ -44,18 +44,15 @@ public class RecordingManager : MonoBehaviour
 
     public event TakeSnapshot OnCaptureSnapshot;
 
-    public string recordingFileName = "";
-    public string pathToRecordingsFolder = "";
-    
     private float _timeUntilNextSnapshot;
 
     public bool isRecording;
 
+    private int _frameCount = 0;
+
     private void Awake()
     {
         _instance = this;
-        
-        recorder = Recorder.instancia;
 
         PedestrianModelIdList = new List<int>();
         VehicleModelIdList = new List<int>();
@@ -72,38 +69,30 @@ public class RecordingManager : MonoBehaviour
         }
     }
 
-    public void StartRecording()
+    public void StartRecording(string recordingFolderPath, string recordingName)
     {
-        //settear header todo refactorizar
-        recorder.cantidadSemaforos = streetLightCount;
-        recorder.modelosPeatones = PedestrianModelIdList;
-        recorder.modelosVehiculos = VehicleModelIdList;
-        recorder.fps = _captureRate;
+        recorder.Initialize(WeatherController, DayNightCicle, recordingFolderPath, recordingName);
         Debug.Log("Recording Started!");
         isRecording = true;
     }
 
 
-    public void SetCaptureRate(TMP_InputField inputField)
+    public void SetCaptureRate(int captureRate)
     {
-        try
-        {
-            _captureRate = Math.Abs(int.Parse(inputField.text));
-        }
-        catch(Exception e)
-        {
-            Debug.Log(e);
-        }
-
-        Debug.Log(_captureRate);
+        _captureRate = captureRate;
     }
     
     public void StopRecording()
     {
-        Debug.Log("Recording Stopped!");
         isRecording = false;
-        recorder.escribirHeader();
-        recorder.DisposeFS();
+        RecordingHeaderData recordingHeaderData = new RecordingHeaderData();
+        recordingHeaderData.CaptureRate = _captureRate;
+        recordingHeaderData.StreetLightCount = streetLightCount;
+        recordingHeaderData.PedestrianModelIdList = PedestrianModelIdList;
+        recordingHeaderData.VehicleModelIdList = VehicleModelIdList;
+        recordingHeaderData.FrameCount = _frameCount;
+        recorder.RecordingHeaderData = recordingHeaderData;
+        recorder.StopRecording();
     }
 
     private void Update()
@@ -116,6 +105,8 @@ public class RecordingManager : MonoBehaviour
             _timeUntilNextSnapshot = _timeBetweenCaptures;
             recorder.RecordSnapshots();
             recorder.RecordWeatherAndToD();
+            
+            _frameCount++;
         }
 
         _timeUntilNextSnapshot -= Time.deltaTime;
@@ -125,18 +116,21 @@ public class RecordingManager : MonoBehaviour
 public class RecordingHeaderData
 {
     public int CaptureRate;
-        
-    [NonSerialized] public List<int> VehicleModelIdList;
 
-    [NonSerialized] public List<int> PedestrianModelIdList;
+    public List<int> VehicleModelIdList;
 
-    public int streetLightCount;
+    public List<int> PedestrianModelIdList;
+
+    public int StreetLightCount;
+
+    public int FrameCount;
 
     public RecordingHeaderData()
     {
         CaptureRate = 0;
         VehicleModelIdList = new List<int>();
         PedestrianModelIdList = new List<int>();
-        streetLightCount = 0;
+        StreetLightCount = 0;
+        FrameCount = 0;
     }
 }

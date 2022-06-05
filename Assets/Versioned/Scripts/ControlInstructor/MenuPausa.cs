@@ -1,3 +1,6 @@
+using System;
+using SimpleFileBrowser;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VehiclePhysics;
@@ -109,12 +112,50 @@ public class MenuPausa : EscapeDialog
         grabacion.SetActive(true);
     }
 
-    public void StartRecording()
+    public void OnButtonComenzarGrabacionPressed(TMP_InputField inputField)
     {
-        RecordingManager.Instance.StartRecording();
-    }
+        if (RecordingManager.Instance.isRecording)
+        {
+            Debug.LogError("Ya se esta grabando. Si quiere realizar otra grabacion, concluya la actual");
+            return;
+        }
+        
+        string initialPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-    public void StopRecording()
+        int captureRate = 24;
+        
+        try
+        {
+            captureRate = Math.Abs(int.Parse(inputField.text));
+        }
+        catch(Exception e)
+        {
+            Debug.Log(e);
+        }
+
+        RecordingManager.Instance.SetCaptureRate(captureRate);
+        
+        if(FileBrowser.IsOpen) return;
+        FileBrowser.SetFilters(true);
+        FileBrowser.ShowSaveDialog(ComenzarGrabacion, null, FileBrowser.PickMode.Files,
+            false, initialPath);
+    }
+    
+    void ComenzarGrabacion(string[] paths)
+    {
+        if (!FileBrowser.Success)
+        {
+            Debug.LogError("Error en el File Browser");
+            return;
+        }
+
+        string pathToRecordingFile = paths[0];
+        string recordingFileName = FileBrowserHelpers.GetFilename(pathToRecordingFile);
+        string pathToRecordingFolder = FileBrowserHelpers.GetDirectoryName(pathToRecordingFile) + "\\";
+        RecordingManager.Instance.StartRecording(pathToRecordingFolder, recordingFileName);
+    }
+    
+    public void OnButtonConcluirGrabacionPressed()
     {
         RecordingManager.Instance.StopRecording();
     }
