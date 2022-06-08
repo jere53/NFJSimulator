@@ -11,10 +11,23 @@ public class CriterioTiempo : MonoBehaviour, ICriterio
 
     public int segundosMaximosPermitidos;
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+    
+
     // Update is called once per frame
     void Update()
     {
         _tiempoActual += Time.deltaTime;
+
+        if (isRecording)
+        {
+            if (_tiempoActual > (minutosMaximosPermitidos * 60) + segundosMaximosPermitidos)
+            {
+                _capturadorErrores.AddCapturaTiempo(_tiempoActual);
+                DisableRecording();
+            }
+        }
     }
 
     public void ComenzarEvaluacion()
@@ -44,4 +57,19 @@ public class CriterioTiempo : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+        _capturadorErrores = capturadorErrores;
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
+
 }

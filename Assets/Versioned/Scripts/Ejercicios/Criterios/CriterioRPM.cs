@@ -25,6 +25,9 @@ public class CriterioRPM : MonoBehaviour, ICriterio
 
     private List<Tuple<float, float>> _rpmEnTiempo;
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
     private void Awake()
     {
 
@@ -63,6 +66,12 @@ public class CriterioRPM : MonoBehaviour, ICriterio
                 
                 _rpmEnTiempo.Add(new Tuple<float, float>(_tiempoActual, rpmActuales));
                 _timerGranularidad = granularidad;
+
+                if (isRecording)
+                {
+                    _capturadorErrores.AddCapturaRpm(new Tuple<float, int, int, int, bool >(_tiempoActual, minimoRpm, maximoRpm, rpmActuales, true));
+                }
+                
             }
             else
             {
@@ -74,6 +83,12 @@ public class CriterioRPM : MonoBehaviour, ICriterio
             if (_enInfraccion) //significa que se estaba excediendo pero ya paro, entonces se agrega a la lista el "final" de la excesion
             {
                 _infracciones.Add(new Tuple<float, int, int, int, bool>(_tiempoActual, rpmActuales, minimoRpm, maximoRpm, false));
+
+                if (isRecording)
+                {
+                    _capturadorErrores.AddCapturaRpm(new Tuple<float, int, int, int, bool>(_tiempoActual, minimoRpm,
+                        maximoRpm, rpmActuales, false));
+                }
             }
             _enInfraccion = false;
             _tiempoHastaMedida = 0f;
@@ -117,4 +132,19 @@ public class CriterioRPM : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+        _capturadorErrores = capturadorErrores;
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
+
 }

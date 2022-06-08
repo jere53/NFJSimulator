@@ -12,6 +12,7 @@ public class Recorder: MonoBehaviour
     public Dictionary<int, SnapshotPeaton> capturasPeatones;
     public SnapshotTrainee capturaTrainee;
     public Dictionary<int, int> colorSemaforos;
+    public DatosEvaluacion capturaDatosEvaluacion;
 
     
     [NonSerialized] public WeatherController instanciaClima; 

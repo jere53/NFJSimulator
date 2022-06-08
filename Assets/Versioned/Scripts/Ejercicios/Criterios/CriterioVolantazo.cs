@@ -27,6 +27,9 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
     private List<Tuple<float, float, float>> _infracciones = new List<Tuple<float, float, float>>();
     //_tiempoActual, doblajeRealizado, doblajeMaximo
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
     private void Awake()
     {
         _vehicle = GetComponent<VPVehicleToolkit>();
@@ -60,6 +63,12 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
             //Debug.Log("volantazo! " + _vehicle.yawVelocity + "rads/s de doblaje, max seguro es: " + doblajeSeguroMaximo + "rads/s");
             _timer = granularidad;
             _tiempoHastaCaptura = granularidad;
+
+            if (isRecording)
+            {
+                _capturadorErrores.AddCapturaVolantazo(new Tuple<float, float, float>(_tiempoActual, _vehicle.yawVelocity, doblajeSeguroMaximo));
+            }
+            
             return;
         }
 
@@ -101,4 +110,19 @@ public class CriterioVolantazo : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+        _capturadorErrores = capturadorErrores;
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
+
 }

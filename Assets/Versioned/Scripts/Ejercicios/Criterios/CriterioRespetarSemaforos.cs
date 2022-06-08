@@ -13,6 +13,9 @@ public class CriterioRespetarSemaforos : MonoBehaviour, ICriterio
     private List<float> _momentosInfracciones = new List<float>();
     private VPVehicleController _vehicleController;
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
     private void Awake()
     {
         _centroVehiculo = transform.Find("LimitesSemaforo");
@@ -77,6 +80,12 @@ public class CriterioRespetarSemaforos : MonoBehaviour, ICriterio
                 else
                 {
                     _momentosInfracciones.Add(_tiempoDesdeComienzo);
+
+                    if (isRecording)
+                    {
+                        _capturadorErrores.AddCapturaSemaforo(_tiempoDesdeComienzo);
+                    }
+                    
                     Debug.Log("SEMAFORO EN ROJO");
 
                 }
@@ -109,4 +118,19 @@ public class CriterioRespetarSemaforos : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+        _capturadorErrores = capturadorErrores;
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
+
 }

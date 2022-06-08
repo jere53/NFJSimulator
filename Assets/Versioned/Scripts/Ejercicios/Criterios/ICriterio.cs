@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 using UnityEngine;
 public interface ICriterio
 {
+    public void EnableRecording(CapturadorErrores capturadorErrores);
+    
+    public void DisableRecording();
+
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos);
 
     public void ComenzarEvaluacion();
