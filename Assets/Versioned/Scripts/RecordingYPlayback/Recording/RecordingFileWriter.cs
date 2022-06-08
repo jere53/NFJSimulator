@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class RecordingFileWriter
@@ -14,28 +15,55 @@ public class RecordingFileWriter
     private FileStream _weatherAndToDFileStream;
     private BinaryWriter _weatherAndToDWriter;
 
+    private FileStream _evalsFileStram;
+    private BinaryWriter _evalsWriter;
+
+    private List<DatosEvaluacion> _evals;
+    private string _evalsPath;
+    
     public RecordingFileWriter(string recordingFolderPath, string recordingName)
     {
-         string recordedSnapshotsPath = recordingFolderPath + recordingName + ".nfj";
-         Debug.Log(recordedSnapshotsPath);
-         if (File.Exists(recordedSnapshotsPath))
-             File.Delete(recordedSnapshotsPath);
-         _recordedSnaphotsFileStream = File.Create(recordedSnapshotsPath);
-         _snapshotsWriter = new BinaryWriter(_recordedSnaphotsFileStream);
+        string recordedSnapshotsPath = recordingFolderPath + recordingName + ".nfj";
+        if (File.Exists(recordedSnapshotsPath))
+            File.Delete(recordedSnapshotsPath);
+        _recordedSnaphotsFileStream = File.Create(recordedSnapshotsPath);
+        _snapshotsWriter = new BinaryWriter(_recordedSnaphotsFileStream);
+        
+        string headerPath = recordingFolderPath + recordingName + "Header" + ".nfj";
+        if (File.Exists(headerPath))
+            File.Delete(headerPath);
+        _headerFileStream = File.Create(headerPath);
+        _headerWriter = new BinaryWriter(_headerFileStream);
          
-         string headerPath = recordingFolderPath + recordingName + "Header" + ".nfj";
-         if (File.Exists(headerPath))
-             File.Delete(headerPath);
-         _headerFileStream = File.Create(headerPath);
-         _headerWriter = new BinaryWriter(_headerFileStream);
-         
-         string weatherAndToDPath = recordingFolderPath + recordingName + "WeatherAndToD" + ".nfj";
+        string weatherAndToDPath = recordingFolderPath + recordingName + "WeatherAndToD" + ".nfj";
         if (File.Exists(weatherAndToDPath))
             File.Delete(weatherAndToDPath);
         _weatherAndToDFileStream = File.Create(weatherAndToDPath); 
         _weatherAndToDWriter = new BinaryWriter(_weatherAndToDFileStream);
+
+        _evalsPath = recordingFolderPath + recordingName + "Evals" + ".json";
+        _evals = new List<DatosEvaluacion>();
     }
 
+    public void WriteEvalSnapshot(DatosEvaluacion datosEvaluacion)
+    {
+        _evals.Add(datosEvaluacion);
+    }
+
+    private void StoreEvals()
+    {
+        Debug.Log("storing Evals");
+        string output = JsonConvert.SerializeObject(_evals, Formatting.Indented);
+        try
+        {
+            File.WriteAllText(_evalsPath, output);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(exception);
+        }
+    }
+    
     public void WriteHeader(RecordingHeaderData recordingHeaderData)
     {
         _headerWriter.Write(recordingHeaderData.VehicleModelIdList.Count);
@@ -54,6 +82,7 @@ public class RecordingFileWriter
         _headerWriter.Write(recordingHeaderData.CaptureRate);
         _headerWriter.Write(recordingHeaderData.FrameCount);
         
+        StoreEvals();
         DisposeFileHandlers();
     }
 
@@ -62,8 +91,8 @@ public class RecordingFileWriter
         _recordedSnaphotsFileStream.Dispose();
         _weatherAndToDFileStream.Dispose();
         _headerFileStream.Dispose();
-        
     }
+    
     public void WriteSnapshot(SnapshotTrainee capturaTrainee, Dictionary<int, SnapshotVehiculo> capturasVehiculos,
         Dictionary<int, SnapshotPeaton> capturasPeatones, Dictionary<int, int> colorSemaforos)
     {

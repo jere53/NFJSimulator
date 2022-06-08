@@ -76,6 +76,8 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
     public void EnableRecording(CapturadorErrores capturadorErrores)
     {
         if(!capturadorErrores) return;
+
+        _capturadorErrores = capturadorErrores;
         
         isRecording = true;
     }
@@ -83,6 +85,7 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
     public void DisableRecording()
     {
         isRecording = false;
+        _capturadorErrores = null;
     }
 
 }

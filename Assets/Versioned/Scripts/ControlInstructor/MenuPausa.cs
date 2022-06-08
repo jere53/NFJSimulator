@@ -15,7 +15,7 @@ public class MenuPausa : EscapeDialog
 
     public VPStandardInput controlVehiculo;
     public WeatherController controlClima;
-    
+    public VehicleBase VehiculoTrainee;
     
     public GameObject uiMenuPausa;
     public GameObject condiciones;
@@ -152,7 +152,12 @@ public class MenuPausa : EscapeDialog
         string pathToRecordingFile = paths[0];
         string recordingFileName = FileBrowserHelpers.GetFilename(pathToRecordingFile);
         string pathToRecordingFolder = FileBrowserHelpers.GetDirectoryName(pathToRecordingFile) + "\\";
+
+        VehiculoTrainee.gameObject.GetComponent<CapturadorErrores>().enabled = true; //para que comienze a capturar
+        //los criterios.
+        
         RecordingManager.Instance.StartRecording(pathToRecordingFolder, recordingFileName);
+        
     }
     
     public void OnButtonConcluirGrabacionPressed()

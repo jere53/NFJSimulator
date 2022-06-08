@@ -122,7 +122,9 @@ public class CriterioRespetarSemaforos : MonoBehaviour, ICriterio
     public void EnableRecording(CapturadorErrores capturadorErrores)
     {
         if(!capturadorErrores) return;
+
         _capturadorErrores = capturadorErrores;
+        
         isRecording = true;
     }
 
@@ -131,6 +133,7 @@ public class CriterioRespetarSemaforos : MonoBehaviour, ICriterio
         isRecording = false;
         _capturadorErrores = null;
     }
+
 
 
 }

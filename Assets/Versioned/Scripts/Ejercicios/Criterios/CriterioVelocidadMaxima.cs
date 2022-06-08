@@ -133,7 +133,9 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
     public void EnableRecording(CapturadorErrores capturadorErrores)
     {
         if(!capturadorErrores) return;
+
         _capturadorErrores = capturadorErrores;
+        
         isRecording = true;
     }
 

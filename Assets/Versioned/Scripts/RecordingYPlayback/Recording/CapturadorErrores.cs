@@ -7,25 +7,50 @@ public class CapturadorErrores : MonoBehaviour
 {
     private DatosEvaluacion _datosEvaluacionBuffer;
 
+    private ICriterio[] _criterios;
+
     private void Awake()
     {
-        _datosEvaluacionBuffer = new DatosEvaluacion();
+
     }
 
     private void OnEnable()
     {
         RecordingManager.Instance.OnCaptureSnapshot += CargarSnapshot;
+        _datosEvaluacionBuffer = new DatosEvaluacion();
+        InitBuffer();
+        _criterios = GetComponents<ICriterio>();
+        foreach (var criterio in _criterios)
+        {
+            criterio.EnableRecording(this);
+        }
+    }
+
+    private void InitBuffer()
+    {
+        _datosEvaluacionBuffer.DatosCriterioAceleracion = new DatosCriterioAceleracion();
+        _datosEvaluacionBuffer.DatosCriterioNafta = new DatosCriterioNafta();
+        _datosEvaluacionBuffer.DatosCriterioVelocidad = new DatosCriterioVelocidad();
+        _datosEvaluacionBuffer.DatosCriterioTiempo = new Tuple<TimeSpan, TimeSpan>(TimeSpan.Zero, TimeSpan.Zero);
+        _datosEvaluacionBuffer.DatosCriterioRpm = new DatosCriterioRpm();
+        _datosEvaluacionBuffer.DatosCriterioVolantazos = new DatosCriterioVolantazos();
+        _datosEvaluacionBuffer.DatosCriterioEvitarAccidentes =
+            new Tuple<List<float>, List<Tuple<float, int>>>(new List<float>(), new List<Tuple<float, int>>());
+        _datosEvaluacionBuffer.DatosCriterioRespetarSemaforos = new List<float>();
     }
 
     private void OnDisable()
     {
         RecordingManager.Instance.OnCaptureSnapshot -= CargarSnapshot;
+        foreach (var criterio in _criterios)
+        {
+            criterio.DisableRecording();
+        }
     }
 
     private void CargarSnapshot(Recorder recorder)
     {
-        recorder.capturaDatosEvaluacion = _datosEvaluacionBuffer;
-        _datosEvaluacionBuffer = new DatosEvaluacion();
+        recorder.capturaDatosEvaluacion = ConsumeBufferedEvalData();
     }
 
     public void AddCapturaAceleracion(Tuple<float, float, float, float, float> infraccion)
@@ -35,6 +60,7 @@ public class CapturadorErrores : MonoBehaviour
 
     public void AddCapturaAccidente(float time)
     {
+        Debug.Log("Accidente Capturado");
         _datosEvaluacionBuffer.DatosCriterioEvitarAccidentes.Item1.Add(time);
     }
 
@@ -70,10 +96,11 @@ public class CapturadorErrores : MonoBehaviour
         _datosEvaluacionBuffer.DatosCriterioVolantazos.Infracciones.Add(infraccion);
     }
 
-    public DatosEvaluacion ConsumeBufferedEvalData()
+    private DatosEvaluacion ConsumeBufferedEvalData()
     {
         var res = _datosEvaluacionBuffer;
         _datosEvaluacionBuffer = new DatosEvaluacion();
+        InitBuffer();
         return res;
     }
 }

@@ -41,7 +41,6 @@ public class RecordingManager : MonoBehaviour
     //segundos hasta la proxima captura
 
     public delegate void TakeSnapshot(Recorder recorder);
-
     public event TakeSnapshot OnCaptureSnapshot;
 
     private float _timeUntilNextSnapshot;
@@ -105,6 +104,7 @@ public class RecordingManager : MonoBehaviour
             _timeUntilNextSnapshot = _timeBetweenCaptures;
             recorder.RecordSnapshots();
             recorder.RecordWeatherAndToD();
+            recorder.RecordEvals();
             
             _frameCount++;
         }

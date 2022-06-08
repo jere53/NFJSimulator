@@ -78,7 +78,9 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
     public void EnableRecording(CapturadorErrores capturadorErrores)
     {
         if(!capturadorErrores) return;
+
         _capturadorErrores = capturadorErrores;
+        
         isRecording = true;
     }
 
@@ -87,6 +89,7 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
         isRecording = false;
         _capturadorErrores = null;
     }
+
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {

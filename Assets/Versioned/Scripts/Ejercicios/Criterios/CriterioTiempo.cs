@@ -61,7 +61,9 @@ public class CriterioTiempo : MonoBehaviour, ICriterio
     public void EnableRecording(CapturadorErrores capturadorErrores)
     {
         if(!capturadorErrores) return;
+
         _capturadorErrores = capturadorErrores;
+        
         isRecording = true;
     }
 
@@ -70,6 +72,7 @@ public class CriterioTiempo : MonoBehaviour, ICriterio
         isRecording = false;
         _capturadorErrores = null;
     }
+
 
 
 }

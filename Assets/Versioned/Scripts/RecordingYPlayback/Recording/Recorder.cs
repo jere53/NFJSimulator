@@ -47,6 +47,12 @@ public class Recorder: MonoBehaviour
         capturasPeatones.Clear();
         colorSemaforos.Clear();
     }
+
+    public void RecordEvals()
+    {
+        _recordingFileWriter.WriteEvalSnapshot(capturaDatosEvaluacion);
+        capturaDatosEvaluacion = null;
+    }
     
     public void RecordWeatherAndToD()
     {

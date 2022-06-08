@@ -27,9 +27,9 @@ public class EstructuraGrabacion : MonoBehaviour
     public Dictionary<int, SnapshotPeaton> snapshotPeatonesIntervalo;
     public SnapshotTrainee snapshotTraineeIntervalo;
     public Dictionary<int, int> snapshotSemaforoIntervalo;
+    public List<DatosEvaluacion> evals;
     
     public delegate void ActualizarSnapshot();
-
     public event ActualizarSnapshot OnPlayIntervalo;
 
     public int numeroIntervalo;
@@ -85,5 +85,10 @@ public class EstructuraGrabacion : MonoBehaviour
         }
         dayNightCicle.orbitSpeed = intervaloClimaToDActual.velocidadOrbita;
         dayNightCicle.timeOfDay = intervaloClimaToDActual.hora;
+    }
+
+    public void PlayIntervaloEval(int intervalo)
+    {
+        evals[intervalo].Presentar();
     }
 }

@@ -34,14 +34,14 @@ public class GroundWeatherInteraction : IWeatherObserver
         //observer que actualiza los valores que retornara a las ruedas segun el clima
         //lee el clima actual de la clase que implemente el control del clima
         currentWeather = weatherController.GetCurrentWeatherPreset();
-        Debug.Log("GWI asociado al " + groundMaterial.physicMaterial.name + " cambio clima a " + currentWeather);
+        //Debug.Log("GWI asociado al " + groundMaterial.physicMaterial.name + " cambio clima a " + currentWeather);
         ModifyGroundMaterialProperties();
     }
 
     public virtual void ModifyGroundMaterialProperties()
     {
         if (!gripAndDragFactors.ContainsKey(currentWeather)) {
-            Debug.Log("no tiene la clave");
+            //Debug.Log("no tiene la clave");
             groundMaterial.drag = 0f;
             groundMaterial.grip = 1f;
             return;

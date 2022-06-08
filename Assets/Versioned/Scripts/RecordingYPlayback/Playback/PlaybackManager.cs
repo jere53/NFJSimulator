@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class PlaybackManager : MonoBehaviour
@@ -22,7 +23,7 @@ public class PlaybackManager : MonoBehaviour
 
     public string pathToRecording;
     public string pathToHeader;
-
+    public string pathToEvalRecording;
     public string pathToWeatherAndToDRecording;
     public WeatherController weatherController;
     public DayNightCicle dayNightCicle;
@@ -42,6 +43,8 @@ public class PlaybackManager : MonoBehaviour
         pathToRecording = pathToRecordingFolder + recordingName;
         pathToHeader = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) + "Header.nfj";
         pathToWeatherAndToDRecording = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) + "WeatherAndToD.nfj";
+        pathToEvalRecording = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) +
+                              "Evals.json";
         
         SpawnearEIndexarGrabados();
         Debug.Log("Spawned");
@@ -51,6 +54,8 @@ public class PlaybackManager : MonoBehaviour
         }
 
         Debug.Log("loaded");
+        
+        CargarEvals();
 
         CargarGrabacionClima();
         
@@ -72,7 +77,9 @@ public class PlaybackManager : MonoBehaviour
             }
 
             Debug.Log("loaded");
-
+            
+            CargarEvals();
+            
             CargarGrabacionClima();
             play = false;
             /*
@@ -160,6 +167,13 @@ public class PlaybackManager : MonoBehaviour
         }
     }
 
+    public void CargarEvals()
+    {
+        string recording = File.ReadAllText(pathToEvalRecording);
+        List<DatosEvaluacion> evals = JsonConvert.DeserializeObject<List<DatosEvaluacion>>(recording);
+        _estructuraGrabacion.evals = evals;
+    }
+    
     public void CargarGrabacion(int intervaloComienzo, int intervaloFinal, 
         Queue<EstructuraGrabacion.IntervaloGrabacion> destino, BinaryReader reader)
     {
@@ -320,6 +334,10 @@ public class PlaybackManager : MonoBehaviour
         for (int intervalo = 0; intervalo < cantidadIntervalos; intervalo++)
         {
             _estructuraGrabacion.PlayIntervalo(intervalo);
+            
+            //Como capturamos un intervalo Eval cada vez que un IntervaloSnapshot,
+            //la cuenta de intervalos va a ser la misma!
+            _estructuraGrabacion.PlayIntervaloEval(intervalo);
             
             yield return new WaitForSeconds(deltaIntervalos);
         }
