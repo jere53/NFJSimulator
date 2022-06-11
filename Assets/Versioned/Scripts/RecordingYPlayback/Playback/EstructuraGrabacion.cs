@@ -34,6 +34,8 @@ public class EstructuraGrabacion : MonoBehaviour
 
     public int numeroIntervalo;
 
+    public delegate void MostrarInfraccion(DatosEvaluacion datosEvaluacion);
+    public event MostrarInfraccion OnMostrarInfraccion;
     public SnapshotTrainee GetSnapshotTrainee()
     {
         return snapshotTraineeIntervalo;
@@ -89,6 +91,6 @@ public class EstructuraGrabacion : MonoBehaviour
 
     public void PlayIntervaloEval(int intervalo)
     {
-        evals[intervalo].Presentar();
+        OnMostrarInfraccion?.Invoke(evals[intervalo]);
     }
 }
