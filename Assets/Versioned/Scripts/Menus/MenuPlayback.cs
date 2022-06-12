@@ -36,7 +36,7 @@ public class MenuPlayback : MonoBehaviour
         ControladorGrabacion.pathGrabacion = pathToRecording;
         ControladorGrabacion.pathHeader = pathToHeader;
         ControladorGrabacion.pathToEvals = pathToEvalRecording;
-        
+
         ControladorGrabacion.ComenzarPlayback(1, false);
     }
 }

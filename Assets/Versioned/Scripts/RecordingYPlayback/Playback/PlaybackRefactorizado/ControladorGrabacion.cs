@@ -65,6 +65,8 @@ public class ControladorGrabacion : MonoBehaviour
         float deltaIntervalosClima = 1/(climaYToDFPS * velocidadReproduccion);
         _reproductor.deltaIntervalosRecording = deltaIntervalosRecording;
         _reproductor.deltaIntervalosClima = deltaIntervalosClima;
+
+        Debug.Log("FPS: " + recordingFps + "    Velocidad Rep: " + velocidadReproduccion + "Delta Intervalo: " + deltaIntervalosRecording);
     }
 
     private void ToggleInterpolar()

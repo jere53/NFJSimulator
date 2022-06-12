@@ -13,8 +13,6 @@ public class LogInfracciones : MonoBehaviour
     public Reproductor Reproductor;
     private void MostrarInfraccion(DatosEvaluacion datosEvaluacion)
     {
-        Debug.Log("Mostrar Infraccion");
-        
         var infraccionesAceleracion = datosEvaluacion.DatosCriterioAceleracion.Infracciones;
         var infraccionesVelocidad = datosEvaluacion.DatosCriterioVelocidad.Infracciones;
         var infraccionesVolantazos = datosEvaluacion.DatosCriterioVolantazos.Infracciones;
