@@ -19,14 +19,16 @@ public class EstructuraGrabacion : MonoBehaviour
     }
 
     //public Dictionary<int, EstadoInicialInterseccion> estadosInicialesIntersecciones = new Dictionary<int, EstadoInicialInterseccion>();
-    [NonSerialized]public WeatherController weatherController;
-    [NonSerialized]public DayNightCicle dayNightCicle;
+    // [NonSerialized]public WeatherController weatherController;
+    // [NonSerialized]public DayNightCicle dayNightCicle;
     public Queue<IntervaloClimaToD> grabacionClimaToD = new Queue<IntervaloClimaToD>();
     public Queue<IntervaloGrabacion> grabacion = new Queue<IntervaloGrabacion>();
     public Dictionary<int, SnapshotVehiculo> snapshotVehiculosIntervalo;
     public Dictionary<int, SnapshotPeaton> snapshotPeatonesIntervalo;
     public SnapshotTrainee snapshotTraineeIntervalo;
     public Dictionary<int, int> snapshotSemaforoIntervalo;
+
+    public IntervaloClimaToD intervaloClimaToDActual;
     
     public delegate void ActualizarSnapshot();
 
@@ -54,36 +56,41 @@ public class EstructuraGrabacion : MonoBehaviour
         return snapshotSemaforoIntervalo.GetValueOrDefault(id, -1);
     }
     
-    public void PlayIntervalo(int intervalo)
+    public bool SiguienteIntervalo()
     {
+        if (grabacion.Count == 0)
+            return false;
         IntervaloGrabacion intervaloActual = grabacion.Dequeue();
         
         snapshotPeatonesIntervalo = intervaloActual.snapshotPeatones;
         snapshotTraineeIntervalo = intervaloActual.snapshotTrainee;
         snapshotVehiculosIntervalo = intervaloActual.snapshotVehiculos;
         snapshotSemaforoIntervalo = intervaloActual.snapshotSemaforo;
-        
-        numeroIntervalo = intervalo;
-        
-        OnPlayIntervalo?.Invoke();
+        return true;
+        //numeroIntervalo = intervalo;
+        //OnPlayIntervalo?.Invoke();
     }
 
-    public void PlayIntervaloClimaToD()
+    public bool SiguienteIntervaloClimaToD()
     {
-        IntervaloClimaToD intervaloClimaToDActual = grabacionClimaToD.Dequeue();
-        switch (intervaloClimaToDActual.clima)
-        {
-            case 0:
-                weatherController.SunnyPreset();
-                break;
-            case 1:
-                weatherController.RainPreset();
-                break;
-            case 2:
-                weatherController.CloudyPreset();
-                break;
-        }
-        dayNightCicle.orbitSpeed = intervaloClimaToDActual.velocidadOrbita;
-        dayNightCicle.timeOfDay = intervaloClimaToDActual.hora;
+        Debug.Log("PlayIntervaloClimaToD");
+        if (grabacionClimaToD.Count == 0)
+            return false;
+        intervaloClimaToDActual = grabacionClimaToD.Dequeue();
+        return true;
+        // switch (intervaloClimaToDActual.clima)
+        // {
+        //     case 0:
+        //         weatherController.SunnyPreset();
+        //         break;
+        //     case 1:
+        //         weatherController.RainPreset();
+        //         break;
+        //     case 2:
+        //         weatherController.CloudyPreset();
+        //         break;
+        // }
+        // dayNightCicle.orbitSpeed = intervaloClimaToDActual.velocidadOrbita;
+        // dayNightCicle.timeOfDay = intervaloClimaToDActual.hora;
     }
 }

@@ -133,8 +133,7 @@ public class PlaybackManager : MonoBehaviour
         }
     }
 
-    public void CargarGrabacion(int intervaloComienzo, int intervaloFinal, 
-        Queue<EstructuraGrabacion.IntervaloGrabacion> destino, BinaryReader reader)
+    public void CargarGrabacion(int intervaloComienzo, int intervaloFinal, Queue<EstructuraGrabacion.IntervaloGrabacion> destino, BinaryReader reader)
     {
         
             for (int intervalo = intervaloComienzo; intervalo < intervaloFinal; intervalo++)
@@ -310,7 +309,7 @@ public class PlaybackManager : MonoBehaviour
 
         for (int intervalo = 0; intervalo < cantidadIntervalos; intervalo++)
         {
-            _estructuraGrabacion.PlayIntervalo(intervalo);
+            _estructuraGrabacion.SiguienteIntervalo();
             
             yield return new WaitForSeconds(deltaIntervalos);
         }
@@ -324,9 +323,10 @@ public class PlaybackManager : MonoBehaviour
         using (BinaryReader reader = new BinaryReader(File.Open(pathToWeatherAndToDRecording, FileMode.Open)))
         {
             long fileLength = reader.BaseStream.Length;
-            _estructuraGrabacion.dayNightCicle = dayNightCicle;
-            _estructuraGrabacion.weatherController = weatherController;
+            // _estructuraGrabacion.dayNightCicle = dayNightCicle;  //CAMBIADO
+            // _estructuraGrabacion.weatherController = weatherController;
             climaYToDFPS = reader.ReadInt32();
+            Debug.Log(climaYToDFPS);
             fileLength -= 4; //los FPS
             while (fileLength > 0)
             {
@@ -337,8 +337,8 @@ public class PlaybackManager : MonoBehaviour
                         clima = reader.ReadInt32(),
                         hora = reader.ReadSingle(),
                         velocidadOrbita = reader.ReadSingle(),
-
                     };
+                    //Debug.Log(intervaloClimaToD.clima + " - " + intervaloClimaToD.hora + " - " + intervaloClimaToD.velocidadOrbita);
                     fileLength -= 4;
                     fileLength -= 4;
                     fileLength -= 4;
@@ -360,8 +360,8 @@ public class PlaybackManager : MonoBehaviour
 
         for (int intervalo = 0; intervalo < cantidadIntervalosClimaYToD; intervalo++)
         {
-            _estructuraGrabacion.PlayIntervaloClimaToD();
-            
+            //_estructuraGrabacion.PlayIntervaloClimaToD(); //CAMBIADO
+            Debug.Log("Tiempo deltaIntervalos: " + deltaIntervalos);
             yield return new WaitForSeconds(deltaIntervalos);
         }
         yield return null;

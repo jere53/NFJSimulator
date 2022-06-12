@@ -50,7 +50,7 @@ public class Recorder: MonoBehaviour
     private static String pathClima;
     
     //public static String folder = @"C:\Users\Franco\Documents\";
-    public static String folder = @"A:\jerem\Desktop\NFJRecordings\";
+    public static String folder = @"E:\Facultad\Ingeniería\Grabacion2\";
     public static String fileName = "grabacion.nfj";
     public static String fileHeaderName = "grabacionHeader.nfj";
     
