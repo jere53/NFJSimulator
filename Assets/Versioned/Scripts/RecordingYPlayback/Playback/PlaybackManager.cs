@@ -333,7 +333,7 @@ public class PlaybackManager : MonoBehaviour
 
         for (int intervalo = 0; intervalo < cantidadIntervalos; intervalo++)
         {
-            _estructuraGrabacion.PlayIntervalo(intervalo);
+            _estructuraGrabacion.SiguienteIntervalo();
             
             //Como capturamos un intervalo Eval cada vez que un IntervaloSnapshot,
             //la cuenta de intervalos va a ser la misma!
@@ -365,8 +365,8 @@ public class PlaybackManager : MonoBehaviour
                         clima = reader.ReadInt32(),
                         hora = reader.ReadSingle(),
                         velocidadOrbita = reader.ReadSingle(),
-
                     };
+                    //Debug.Log(intervaloClimaToD.clima + " - " + intervaloClimaToD.hora + " - " + intervaloClimaToD.velocidadOrbita);
                     fileLength -= 4;
                     fileLength -= 4;
                     fileLength -= 4;
@@ -388,8 +388,8 @@ public class PlaybackManager : MonoBehaviour
         Debug.Log(deltaIntervalos + "   intervalos Clima" + cantidadIntervalosClimaYToD);
         for (int intervalo = 0; intervalo < cantidadIntervalosClimaYToD; intervalo++)
         {
-            _estructuraGrabacion.PlayIntervaloClimaToD();
-            
+            //_estructuraGrabacion.PlayIntervaloClimaToD(); //CAMBIADO
+            Debug.Log("Tiempo deltaIntervalos: " + deltaIntervalos);
             yield return new WaitForSeconds(deltaIntervalos);
         }
         yield return null;

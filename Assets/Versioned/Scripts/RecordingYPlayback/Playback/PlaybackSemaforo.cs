@@ -9,6 +9,7 @@ public class PlaybackSemaforo : MonoBehaviour, IPlayback
     private Semaforo _semaforo;
 
     public EstructuraGrabacion estructuraGrabacion;
+    public Reproductor reproductor;
     
     private void Awake()
     {
@@ -17,7 +18,7 @@ public class PlaybackSemaforo : MonoBehaviour, IPlayback
 
     public void ComenzarAEscuchar()
     {
-        estructuraGrabacion.OnPlayIntervalo += ActualizarSnapshot;
+        reproductor.OnPlayIntervalo += ActualizarSnapshot;
     }
 
 
@@ -48,4 +49,6 @@ public class PlaybackSemaforo : MonoBehaviour, IPlayback
     {
         estructuraGrabacion.OnPlayIntervalo -= ActualizarSnapshot;
     }
+    
+    
 }
