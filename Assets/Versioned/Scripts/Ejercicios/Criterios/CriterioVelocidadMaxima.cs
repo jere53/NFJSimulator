@@ -25,6 +25,9 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
 
     private float _timerGranularidad;
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
 
     private void Awake()
     {
@@ -59,6 +62,11 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
                 _velocidadesEnTiempo.Add(new Tuple<float, float>(_tiempoActual, velocidadActual));
 
                 _timerGranularidad = granularidad;
+
+                if (isRecording)
+                {
+                    _capturadorErrores.AddCapturaVelocidad(new Tuple<float, float, bool >(_tiempoActual, velocidadActual, true));
+                }
             }
             else
             {
@@ -70,6 +78,13 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
             if (_enInfraccion) //significa que se estaba excediendo pero ya paro, entonces se agrega a la lista el "final" de la excesion
             {
                 _infracciones.Add(new Tuple<float, float, bool>(_tiempoActual, velocidadActual, false));
+
+                if (isRecording)
+                {
+                    _capturadorErrores.AddCapturaVelocidad(
+                        new Tuple<float, float, bool>(_tiempoActual, velocidadActual, false));
+                }
+                
             }
             _enInfraccion = false;
             _tiempoHastaMedida = 0f;
@@ -114,4 +129,21 @@ public class CriterioVelocidadMaxima : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+
+        _capturadorErrores = capturadorErrores;
+        
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
+
 }

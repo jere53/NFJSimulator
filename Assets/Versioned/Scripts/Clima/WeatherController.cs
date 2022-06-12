@@ -54,6 +54,8 @@ public class WeatherController : MonoBehaviour
     }
 
     public void RainPreset() {
+        if(rainParticleSystem == null) return;
+        
         //efectos
         rainParticleSystem.SetActive(true);
         _volumetricClouds.cloudPreset.overrideState = true;

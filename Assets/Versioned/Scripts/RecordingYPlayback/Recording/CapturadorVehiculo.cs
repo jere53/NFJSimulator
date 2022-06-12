@@ -15,21 +15,19 @@ public class CapturadorVehiculo : MonoBehaviour
     private void Awake()
     {
         id = numeroVehiculo;
-        Recorder.instancia.modelosVehiculos.Add(modelo);
+        RecordingManager.Instance.VehicleModelIdList.Add(modelo);
         numeroVehiculo++;
     }
     private void OnEnable()
     {
-        Recorder.instancia.OnCapture += CargarSnapshot;
+        RecordingManager.Instance.OnCaptureSnapshot += CargarSnapshot;
     }
     void OnDisable()
     {
-        Recorder.instancia.OnCapture -= CargarSnapshot;
+        RecordingManager.Instance.OnCaptureSnapshot -= CargarSnapshot;
     }
     
-    
-
-    public void CargarSnapshot()
+    public void CargarSnapshot(Recorder recorder)
     {
         SnapshotVehiculo snap = new SnapshotVehiculo();
         snap._transform = transform;   
@@ -38,7 +36,7 @@ public class CapturadorVehiculo : MonoBehaviour
         snap.ruedaRL = ruedaRL;
         snap.ruedaRR = ruedaRR;
         
-        Recorder.instancia.capturasVehiculos.Add(id, snap);
+        recorder.capturasVehiculos.Add(id, snap);
     }
 
 

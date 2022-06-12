@@ -16,23 +16,15 @@ public class CapturadorTrainee : MonoBehaviour
 
     void OnEnable()
     {
-        Recorder.instancia.OnCapture += CargarSnapshot;
+        RecordingManager.Instance.OnCaptureSnapshot += CargarSnapshot;
     }    
     
     void OnDisable()
     {
-        Recorder.instancia.OnCapture -= CargarSnapshot;
+        RecordingManager.Instance.OnCaptureSnapshot -= CargarSnapshot;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            Recorder.instancia.GrabacionManager(24, 1);
-        }
-    }
-
-    public void CargarSnapshot()
+    public void CargarSnapshot(Recorder recorder)
     {
         SnapshotTrainee snap = new SnapshotTrainee();
         snap._transform = transform;
@@ -48,7 +40,7 @@ public class CapturadorTrainee : MonoBehaviour
         snap.ruedaRL = gameObject.transform.GetChild(0).GetChild(3).GetChild(1);
         snap.ruedaRR = gameObject.transform.GetChild(0).GetChild(4).GetChild(1);
         snap.volante = gameObject.transform.GetChild(0).GetChild(0).GetChild(13);
-        Recorder.instancia.capturaTrainee = snap;
+        recorder.capturaTrainee = snap;
     }
 
 }

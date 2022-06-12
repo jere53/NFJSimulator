@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class PlaybackManager : MonoBehaviour
@@ -22,7 +23,7 @@ public class PlaybackManager : MonoBehaviour
 
     public string pathToRecording;
     public string pathToHeader;
-
+    public string pathToEvalRecording;
     public string pathToWeatherAndToDRecording;
     public WeatherController weatherController;
     public DayNightCicle dayNightCicle;
@@ -37,17 +38,48 @@ public class PlaybackManager : MonoBehaviour
 
     private int cantidadSemaforos;
 
+    public void BeginPlayback(string pathToRecordingFolder, string recordingName)
+    {
+        pathToRecording = pathToRecordingFolder + recordingName;
+        pathToHeader = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) + "Header.nfj";
+        pathToWeatherAndToDRecording = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) + "WeatherAndToD.nfj";
+        pathToEvalRecording = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) +
+                              "Evals.json";
+        
+        SpawnearEIndexarGrabados();
+        Debug.Log("Spawned");
+        using (BinaryReader reader = new BinaryReader(File.Open(pathToRecording, FileMode.Open)))
+        {
+            CargarGrabacion(0, cantidadIntervalos, _estructuraGrabacion.grabacion, reader);
+        }
+
+        Debug.Log("loaded");
+        
+        CargarEvals();
+
+        CargarGrabacionClima();
+        
+        StartCoroutine(Play());
+        StartCoroutine(PlayClimaAndToD());
+
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.W)) play = true; 
         if (play)
         {
             SpawnearEIndexarGrabados();
+            Debug.Log("Spawned");
             using (BinaryReader reader = new BinaryReader(File.Open(pathToRecording, FileMode.Open)))
             {
                 CargarGrabacion(0, cantidadIntervalos, _estructuraGrabacion.grabacion, reader);
             }
 
+            Debug.Log("loaded");
+            
+            CargarEvals();
+            
             CargarGrabacionClima();
             play = false;
             /*
@@ -130,9 +162,18 @@ public class PlaybackManager : MonoBehaviour
             recordingFps = reader.ReadInt32();
             cantidadIntervalos = reader.ReadInt32();
 
+            Debug.Log(cantidadPeatones+ " " + cantidadVehiculos + " " + cantidadIntervalos);
+
         }
     }
 
+    public void CargarEvals()
+    {
+        string recording = File.ReadAllText(pathToEvalRecording);
+        List<DatosEvaluacion> evals = JsonConvert.DeserializeObject<List<DatosEvaluacion>>(recording);
+        _estructuraGrabacion.evals = evals;
+    }
+    
     public void CargarGrabacion(int intervaloComienzo, int intervaloFinal, 
         Queue<EstructuraGrabacion.IntervaloGrabacion> destino, BinaryReader reader)
     {
@@ -287,30 +328,16 @@ public class PlaybackManager : MonoBehaviour
 
     public IEnumerator Play()
     {
-        /*
-        SpawnearEIndexarGrabados();
-        int intervaloFinal;
-        
-        if (cantidadIntervalos > 2400)
-        {
-            intervaloFinal = 2400;
-        }
-        else
-        {
-            intervaloFinal = cantidadIntervalos;
-        }
-
-        using (BinaryReader reader = new BinaryReader(File.Open(pathToRecording, FileMode.Open)))
-        {
-            CargarGrabacion(0, intervaloFinal, actualChunkGrabacion, reader);
-        }
-        */
-        
         float deltaIntervalos = 1f/recordingFps;
+        Debug.Log("Intervalos: " + cantidadIntervalos+ "delta Intervalos" + deltaIntervalos);
 
         for (int intervalo = 0; intervalo < cantidadIntervalos; intervalo++)
         {
             _estructuraGrabacion.PlayIntervalo(intervalo);
+            
+            //Como capturamos un intervalo Eval cada vez que un IntervaloSnapshot,
+            //la cuenta de intervalos va a ser la misma!
+            _estructuraGrabacion.PlayIntervaloEval(intervalo);
             
             yield return new WaitForSeconds(deltaIntervalos);
         }
@@ -326,8 +353,9 @@ public class PlaybackManager : MonoBehaviour
             long fileLength = reader.BaseStream.Length;
             _estructuraGrabacion.dayNightCicle = dayNightCicle;
             _estructuraGrabacion.weatherController = weatherController;
-            climaYToDFPS = reader.ReadInt32();
-            fileLength -= 4; //los FPS
+            //climaYToDFPS = reader.ReadInt32();
+            climaYToDFPS = recordingFps;
+            //fileLength -= 4; //los FPS
             while (fileLength > 0)
             {
                 try
@@ -357,7 +385,7 @@ public class PlaybackManager : MonoBehaviour
     public IEnumerator PlayClimaAndToD()
     {
         float deltaIntervalos = 1f/climaYToDFPS;
-
+        Debug.Log(deltaIntervalos + "   intervalos Clima" + cantidadIntervalosClimaYToD);
         for (int intervalo = 0; intervalo < cantidadIntervalosClimaYToD; intervalo++)
         {
             _estructuraGrabacion.PlayIntervaloClimaToD();

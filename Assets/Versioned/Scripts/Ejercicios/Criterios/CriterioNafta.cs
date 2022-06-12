@@ -18,6 +18,9 @@ public class CriterioNafta : MonoBehaviour, ICriterio
     private List<Tuple<float, float>> _consumoAccum;
     private VehicleBase _vehicle;
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
     private void Awake()
     {
         _vehicle = GetComponent<VehicleBase>();
@@ -56,6 +59,15 @@ public class CriterioNafta : MonoBehaviour, ICriterio
         _consumoAccum.Add(new Tuple<float, float>(_tiempoActual, _litrosConsumidos));
         
         _tiemerGranularidad = granularidad;
+
+        if (isRecording)
+        {
+            if (_litrosConsumidos > objetivoLitrosConsumidos)
+            {
+                _capturadorErrores.AddCapturaNafta(_litrosConsumidos);
+                DisableRecording(); //solo se captura el momento del exceso
+            }
+        }
     }
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datosEvaluacion)
@@ -86,4 +98,22 @@ public class CriterioNafta : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+
+        _capturadorErrores = capturadorErrores;
+        
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
+
+
 }

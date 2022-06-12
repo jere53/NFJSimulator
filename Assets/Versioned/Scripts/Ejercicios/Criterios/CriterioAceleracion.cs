@@ -21,6 +21,9 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
 
     public float maximaAceleracion; //positivo para aceleradas, negativo para frenadas.
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
     private void Awake()
     {
         _vehicle = GetComponent<VPVehicleToolkit>();
@@ -54,6 +57,12 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
                 _vehicle.lateralG, _vehicle.verticalG, maximaAceleracion));
         
             _tiemerGranularidad = granularidad;
+
+            if (isRecording)
+            {
+                _capturadorErrores.AddCapturaAceleracion(new Tuple<float, float, float, float, float>(_tiempoActual, 
+                    _vehicle.longitudinalG, _vehicle.lateralG, _vehicle.verticalG, maximaAceleracion));
+            }
             
             return;
 
@@ -65,6 +74,22 @@ public class CriterioAceleracion : MonoBehaviour, ICriterio
         
         _tiemerGranularidad = granularidad;
     }
+
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+
+        _capturadorErrores = capturadorErrores;
+        
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
 
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos)
     {

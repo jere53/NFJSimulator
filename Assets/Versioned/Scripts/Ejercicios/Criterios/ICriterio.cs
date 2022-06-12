@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 using UnityEngine;
 public interface ICriterio
 {
+    public void EnableRecording(CapturadorErrores capturadorErrores);
+    
+    public void DisableRecording();
+
     public void ObtenerDatosEvaluacion(ref DatosEvaluacion datos);
 
     public void ComenzarEvaluacion();
@@ -128,6 +132,7 @@ public class DatosEvaluacion
     void PresentarTiempo()
     {
         if(DatosCriterioTiempo == null) return;
+        if(DatosCriterioTiempo.Item1 == TimeSpan.Zero && DatosCriterioTiempo.Item2 == TimeSpan.Zero) return;
         
         string resultadoEvaluacion = "";
 
@@ -153,6 +158,7 @@ public class DatosEvaluacion
     void PresentarVelocidadMaxima()
     {
         if(DatosCriterioVelocidad == null) return;
+        if(DatosCriterioVelocidad.Infracciones.Count == 0) return;
         
         Debug.Log("Se detectaron los siguientes excesos de velocidad:");
         
@@ -174,6 +180,7 @@ public class DatosEvaluacion
     void PresentarRespetarSemaforos()
     {
         if (DatosCriterioRespetarSemaforos == null) return;
+        if (DatosCriterioRespetarSemaforos.Count == 0) return;
 
         string resultadoEvaluacion = "El Evaluado paso semaforos en rojo en los siguientes segundos luego de comenzada la evaluacion '\n'";
         foreach (var infraccion in DatosCriterioRespetarSemaforos)
@@ -186,6 +193,7 @@ public class DatosEvaluacion
     void PresentarNafta()
     {
         if (DatosCriterioNafta == null) return;
+        if (DatosCriterioNafta.LitrosConsumidos <= DatosCriterioNafta.ObjetivoListrosConsumidos) return;
         
         float litrosConsumidos = DatosCriterioNafta.LitrosConsumidos;
         float objetivoLitrosConsumidos = DatosCriterioNafta.ObjetivoListrosConsumidos;
@@ -199,7 +207,8 @@ public class DatosEvaluacion
     void PresentarAccidentes()
     {
         if (DatosCriterioEvitarAccidentes == null) return;
-        
+        if (DatosCriterioEvitarAccidentes.Item1.Count == 0 && DatosCriterioEvitarAccidentes.Item2.Count == 0) return;
+
         var golpesAPeatones = DatosCriterioEvitarAccidentes.Item1;
         var golpesAVehiculos = DatosCriterioEvitarAccidentes.Item2;
         Debug.Log("Durante la evaluacion, se registraron impactos con peatones en los momentos: \n");
@@ -219,6 +228,7 @@ public class DatosEvaluacion
     void PresentarRPM()
     {
         if(DatosCriterioRpm == null) return;
+        if (DatosCriterioRpm.Infracciones.Count == 0) return;
         
         Debug.Log("Se detectaron las siguientes faltas en RPM:");
         
@@ -242,6 +252,7 @@ public class DatosEvaluacion
     void PresentarAceleracion()
     {
         if (DatosCriterioAceleracion == null) return;
+        if (DatosCriterioAceleracion.Infracciones.Count == 0) return;
 
         Debug.Log("Se detectaron los siguientes errores respecto a la aceleracion: ");
 
@@ -257,6 +268,8 @@ public class DatosEvaluacion
     void PresentarVolantazo()
     {
         if (DatosCriterioVolantazos == null) return;
+        if (DatosCriterioVolantazos.Infracciones.Count == 0) return;
+        
         Debug.Log("Volantazos: ");
         foreach (var infraccion in DatosCriterioVolantazos.Infracciones)
         {

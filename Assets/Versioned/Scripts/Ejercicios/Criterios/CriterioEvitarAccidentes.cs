@@ -12,6 +12,9 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
     private List<float> _golpesAPeatones = new List<float>();
     private List<Tuple<float, int>> _golpesAVehiculos = new List<Tuple<float, int>>();
 
+    private bool isRecording;
+    private CapturadorErrores _capturadorErrores;
+
     private void Update()
     {
         _tiempoActual += Time.deltaTime;
@@ -23,6 +26,10 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
         if (other.CompareTag("Peaton"))
         {
             _golpesAPeatones.Add(_tiempoActual);
+            if (isRecording)
+            {
+                _capturadorErrores.AddCapturaAccidente(_tiempoActual);
+            }
         }
     }
 
@@ -32,6 +39,10 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
         if (other.gameObject.CompareTag("Auto"))
         {
             _golpesAVehiculos.Add(new Tuple<float, int>(_tiempoActual, other.gameObject.GetInstanceID()));
+            if (isRecording)
+            {
+                _capturadorErrores.AddCapturaAccidente(_tiempoActual);
+            }
         }
     }
 
@@ -61,4 +72,20 @@ public class CriterioEvitarAccidentes : MonoBehaviour, ICriterio
     {
         Destroy(this);
     }
+    
+    public void EnableRecording(CapturadorErrores capturadorErrores)
+    {
+        if(!capturadorErrores) return;
+
+        _capturadorErrores = capturadorErrores;
+        
+        isRecording = true;
+    }
+
+    public void DisableRecording()
+    {
+        isRecording = false;
+        _capturadorErrores = null;
+    }
+
 }
