@@ -45,14 +45,6 @@ public class FallasVehiculo : MonoBehaviour
         _renderer = vidrio.GetComponent<MeshRenderer>();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.ScrollLock))
-        {
-            DesempaniarVidrio();
-        }
-    }
-
     public void Frenos()
     {
         Debug.Log("Frenos cortados");

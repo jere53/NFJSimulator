@@ -1,9 +1,7 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
-using Unity.VisualScripting;
 
 
 public class InicializadorGrabaciones : MonoBehaviour
@@ -48,7 +46,6 @@ public class InicializadorGrabaciones : MonoBehaviour
                 v.GetComponent<PlaybackVehiculo>().reproductor = reproductor;
                 v.GetComponent<PlaybackVehiculo>().id = idVehiculo;
                 v.GetComponent<PlaybackVehiculo>().ComenzarAEscuchar();
-                //vehiculos.Add(v);
             }
 
             cantidadPeatones = reader.ReadInt32();
@@ -63,7 +60,6 @@ public class InicializadorGrabaciones : MonoBehaviour
                 p.GetComponent<PlaybackPeaton>().reproductor = reproductor;
                 p.GetComponent<PlaybackPeaton>().id = idPeaton;
                 p.GetComponent<PlaybackPeaton>().ComenzarAEscuchar();
-                //peatones.Add(p);
             }
 
             trainee = Instantiate(prefabTrainee);
@@ -71,10 +67,8 @@ public class InicializadorGrabaciones : MonoBehaviour
             trainee.GetComponent<PlaybackTrainee>().estructuraGrabacion = _estructuraGrabacion;
             trainee.GetComponent<PlaybackTrainee>().reproductor = reproductor;
             trainee.GetComponent<PlaybackTrainee>().ComenzarAEscuchar();
-            //trainee.GetComponent<Rigidbody>().interpolation = RigidbodyInterpolation.Interpolate;
             weatherController.rainParticleSystem = trainee.GetComponent<PlaybackTrainee>().rainParticleSystem;
             
-            //InicializarIntersecciones(reader);
 
             cantidadSemaforos = reader.ReadInt32();
             for (int s = 0; s < cantidadSemaforos; s++)   
@@ -223,8 +217,6 @@ public class InicializadorGrabaciones : MonoBehaviour
             for (int s = 0; s < cantidadSemaforos; s++)    //REVISAR. Por que se setea la estructura y comienza a escuchar aca y no cuando instancia los objetos???
             {
                 int snapshotSemaforo = reader.ReadInt32();
-                // semaforos[s].estructuraGrabacion = _estructuraGrabacion;
-                // semaforos[s].ComenzarAEscuchar();
                 intervaloGrabacion.snapshotSemaforo.Add(s, snapshotSemaforo);
             }
 
@@ -237,11 +229,7 @@ public class InicializadorGrabaciones : MonoBehaviour
     private void CargarClima(EstructuraGrabacion _estructuraGrabacion, BinaryReader reader)
     {
         long fileLength = reader.BaseStream.Length;
-        // _estructuraGrabacion.dayNightCicle = dayNightCicle;
-        // _estructuraGrabacion.weatherController = weatherController;
-        //Debug.Log(reader.ReadInt32());
-        //climaYToDFPS = reader.ReadInt32();
-        //fileLength -= 4; //los FPS
+
         while (fileLength > 0)
         {
             try
@@ -252,7 +240,6 @@ public class InicializadorGrabaciones : MonoBehaviour
                     hora = reader.ReadSingle(),
                     velocidadOrbita = reader.ReadSingle(),
                 };
-                //Debug.Log(intervaloClimaToD.clima + " - " + intervaloClimaToD.hora + " - " + intervaloClimaToD.velocidadOrbita);
                 fileLength -= 4;
                 fileLength -= 4;
                 fileLength -= 4;

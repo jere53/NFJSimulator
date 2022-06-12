@@ -25,16 +25,6 @@ public class Sirena : MonoBehaviour {
         sonido = GetComponent<AudioSource>();
         sonido.enabled = false;
     }
-
-    private void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            ToggleSirena();
-        }
-    }
-
     public void ToggleSirena()
     {
         if (!sirenaActiva)

@@ -34,38 +34,6 @@ public class Reproductor : MonoBehaviour
 
     private int currentFrame = 0;
 
-
-    // Update is called once per frame
-    // void Update()
-    // {
-    //     if (play)
-    //     {
-    //         //Cuando pasa el tiempo que tiene que pasar entre cada intervalo de la grabacion, cambio de frame
-    //         if (timeElapsedRecording < deltaIntervalosRecording)
-    //         {
-    //             timeElapsedRecording += Time.deltaTime;
-    //         }
-    //         else
-    //         {
-    //             timeElapsedRecording = 0;
-    //             _estructuraGrabacion.SiguienteIntervalo();
-    //             OnPlayIntervalo?.Invoke();
-    //         }
-    //         
-    //         //Lo mismo pero con el clima
-    //         if (timeElapsedClima < deltaIntervalosClima)
-    //         {
-    //             //valueToLerp = Mathf.Lerp(startValue, endValue, timeElapsed / lerpDuration);
-    //             timeElapsedClima += Time.deltaTime;
-    //         }
-    //         else
-    //         {
-    //             timeElapsedClima = 0;
-    //             _estructuraGrabacion.PlayIntervaloClimaToD();
-    //         }
-    //     }
-    // }
-
     public void Reproducir()
     {
         coroutineGrabacion = StartCoroutine(Play());

@@ -29,10 +29,12 @@ public class Peaton : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //Logger.Log("atropellaron a un peaton " + Time.realtimeSinceStartup + " segundos despues de inicializar la simulacion");
+        /*
         if (other.gameObject.CompareTag("Player"))
         {
-            Logger.Log("Trainee atropello un peaton " + Time.realtimeSinceStartup + " segundos despues de inicializar la simulacion");
+            Debug.Log("Trainee atropello un peaton " + Time.realtimeSinceStartup + " segundos despues de inicializar la simulacion");
         }
+        */
 
         Rigidbody rb = other.attachedRigidbody;
         Vector3 rbVel = rb.velocity;

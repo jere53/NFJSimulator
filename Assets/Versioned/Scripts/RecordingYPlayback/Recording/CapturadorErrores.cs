@@ -8,12 +8,6 @@ public class CapturadorErrores : MonoBehaviour
     private DatosEvaluacion _datosEvaluacionBuffer;
 
     private ICriterio[] _criterios;
-
-    private void Awake()
-    {
-
-    }
-
     private void OnEnable()
     {
         RecordingManager.Instance.OnCaptureSnapshot += CargarSnapshot;
