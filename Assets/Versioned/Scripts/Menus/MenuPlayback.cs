@@ -1,10 +1,11 @@
 using System;
+using System.IO;
 using SimpleFileBrowser;
 using UnityEngine;
 
 public class MenuPlayback : MonoBehaviour
 {
-    public PlaybackManager PlaybackManager;
+    public ControladorGrabacion ControladorGrabacion;
     
     public void OnButtonPlayPressed()
     {
@@ -21,7 +22,21 @@ public class MenuPlayback : MonoBehaviour
     private void ComenzarPlayback(string[] paths)
     {
         string path = paths[0];
-        PlaybackManager.BeginPlayback(FileBrowserHelpers.GetDirectoryName(path) + "\\"
-            , FileBrowserHelpers.GetFilename(path));
+
+        string pathToRecordingFolder = FileBrowserHelpers.GetDirectoryName(path) + "\\";
+        string recordingName = FileBrowserHelpers.GetFilename(path);
+        
+        string pathToRecording = pathToRecordingFolder + recordingName;
+        string pathToHeader = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) + "Header.nfj";
+        string pathToWeatherAndToDRecording = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) + "WeatherAndToD.nfj";
+        string pathToEvalRecording = pathToRecordingFolder + Path.GetFileNameWithoutExtension(recordingName) +
+                              "Evals.json";
+
+        ControladorGrabacion.pathClima = pathToWeatherAndToDRecording;
+        ControladorGrabacion.pathGrabacion = pathToRecording;
+        ControladorGrabacion.pathHeader = pathToHeader;
+        ControladorGrabacion.pathToEvals = pathToEvalRecording;
+        
+        ControladorGrabacion.ComenzarPlayback(1, false);
     }
 }

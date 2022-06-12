@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlaybackSemaforo : MonoBehaviour, IPlayback
@@ -49,6 +46,5 @@ public class PlaybackSemaforo : MonoBehaviour, IPlayback
     {
         estructuraGrabacion.OnPlayIntervalo -= ActualizarSnapshot;
     }
-    
     
 }

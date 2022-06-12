@@ -10,7 +10,7 @@ public class LogInfracciones : MonoBehaviour
 
     public GameObject popUpPrefab;
 
-    public EstructuraGrabacion EstructuraGrabacion;
+    public Reproductor Reproductor;
     private void MostrarInfraccion(DatosEvaluacion datosEvaluacion)
     {
         Debug.Log("Mostrar Infraccion");
@@ -102,11 +102,11 @@ public class LogInfracciones : MonoBehaviour
     
     private void OnEnable()
     {
-        EstructuraGrabacion.OnMostrarInfraccion += MostrarInfraccion;
+        Reproductor.OnMostrarInfraccion += MostrarInfraccion;
     }
 
     private void OnDisable()
     {
-        EstructuraGrabacion.OnMostrarInfraccion -= MostrarInfraccion;
+        Reproductor.OnMostrarInfraccion -= MostrarInfraccion;
     }
 }

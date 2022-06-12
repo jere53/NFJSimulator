@@ -17,10 +17,7 @@ public class EstructuraGrabacion : MonoBehaviour
         public SnapshotTrainee snapshotTrainee;
         public Dictionary<int, int> snapshotSemaforo;
     }
-
-    //public Dictionary<int, EstadoInicialInterseccion> estadosInicialesIntersecciones = new Dictionary<int, EstadoInicialInterseccion>();
-    // [NonSerialized]public WeatherController weatherController;
-    // [NonSerialized]public DayNightCicle dayNightCicle;
+    
     public Queue<IntervaloClimaToD> grabacionClimaToD = new Queue<IntervaloClimaToD>();
     public Queue<IntervaloGrabacion> grabacion = new Queue<IntervaloGrabacion>();
     public Dictionary<int, SnapshotVehiculo> snapshotVehiculosIntervalo;
@@ -69,8 +66,6 @@ public class EstructuraGrabacion : MonoBehaviour
         snapshotVehiculosIntervalo = intervaloActual.snapshotVehiculos;
         snapshotSemaforoIntervalo = intervaloActual.snapshotSemaforo;
         return true;
-        //numeroIntervalo = intervalo;
-        //OnPlayIntervalo?.Invoke();
     }
 
     public bool SiguienteIntervaloClimaToD()
@@ -80,24 +75,6 @@ public class EstructuraGrabacion : MonoBehaviour
             return false;
         intervaloClimaToDActual = grabacionClimaToD.Dequeue();
         return true;
-        // switch (intervaloClimaToDActual.clima)
-        // {
-        //     case 0:
-        //         weatherController.SunnyPreset();
-        //         break;
-        //     case 1:
-        //         weatherController.RainPreset();
-        //         break;
-        //     case 2:
-        //         weatherController.CloudyPreset();
-        //         break;
-        // }
-        // dayNightCicle.orbitSpeed = intervaloClimaToDActual.velocidadOrbita;
-        // dayNightCicle.timeOfDay = intervaloClimaToDActual.hora;
     }
-
-    public void PlayIntervaloEval(int intervalo)
-    {
-        OnMostrarInfraccion?.Invoke(evals[intervalo]);
-    }
+    
 }

@@ -25,8 +25,14 @@ public class Reproductor : MonoBehaviour
     public delegate void ActualizarPosicion();
     public event ActualizarPosicion OnPlayIntervalo;
     
+    public delegate void MostrarInfraccion(DatosEvaluacion datosEvaluacion);
+    public event MostrarInfraccion OnMostrarInfraccion;
+    
+    
     private Coroutine coroutineGrabacion;
     private Coroutine coroutineClima;
+
+    private int currentFrame = 0;
 
 
     // Update is called once per frame
@@ -75,10 +81,21 @@ public class Reproductor : MonoBehaviour
     public IEnumerator Play()
     {
         bool existenFrames = true;
+        currentFrame = 0;
         while(existenFrames)
         {
             existenFrames = _estructuraGrabacion.SiguienteIntervalo();
             OnPlayIntervalo?.Invoke();
+            try
+            {
+                OnMostrarInfraccion?.Invoke(_estructuraGrabacion.evals[currentFrame]);
+            }
+            catch (ArgumentException e)
+            {
+                Debug.LogWarning(e);
+            }
+
+            currentFrame++;
             yield return new WaitForSeconds(deltaIntervalosRecording);
         }
     }

@@ -15,6 +15,7 @@ public class ControladorGrabacion : MonoBehaviour
     public string pathHeader;
     public string pathGrabacion;
     public string pathClima;
+    public string pathToEvals;
 
     //public float velocidadReproduccion = 1;
     
@@ -26,17 +27,11 @@ public class ControladorGrabacion : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            AbirGrabacion();
-            ReproducirGrabacion(0.3f, true);
-        } 
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInterpolar();
             Debug.Log("Interpolacion Cambiada");
-        } 
-            
+        }
     }
 
     public void ComenzarPlayback(float velocidadReproduccion, bool interpolar)
@@ -49,6 +44,7 @@ public class ControladorGrabacion : MonoBehaviour
     {
         inicializadorGrabaciones.InicializarGrabacion(pathHeader, _estructuraGrabacion, _reproductor);
         inicializadorGrabaciones.CargarFrames(pathGrabacion, pathClima, _estructuraGrabacion);
+        inicializadorGrabaciones.CargarEvals(pathToEvals, _estructuraGrabacion);
         
         recordingFps = inicializadorGrabaciones.recordingFps;
         cantidadIntervalos = inicializadorGrabaciones.cantidadIntervalos;
@@ -63,7 +59,7 @@ public class ControladorGrabacion : MonoBehaviour
         _reproductor.Reproducir();
     }
 
-    public void SetearVelocidad(float velocidadReproduccion)
+    private void SetearVelocidad(float velocidadReproduccion)
     {
         float deltaIntervalosRecording = 1/(recordingFps * velocidadReproduccion);
         float deltaIntervalosClima = 1/(climaYToDFPS * velocidadReproduccion);
@@ -71,11 +67,8 @@ public class ControladorGrabacion : MonoBehaviour
         _reproductor.deltaIntervalosClima = deltaIntervalosClima;
     }
 
-    public void ToggleInterpolar()
+    private void ToggleInterpolar()
     {
         _reproductor.interpolar = !_reproductor.interpolar;
     }
-    
-    
-    
 }

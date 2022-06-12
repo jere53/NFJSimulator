@@ -62,7 +62,7 @@ public class PlaybackTrainee : MonoBehaviour
 
                 Vector3 rotacionActual = actual.posYrot.eulerAngles;
                 Vector3 rotacionSiguiente = siguiente.posYrot.eulerAngles; 
-                acomodarRotacion(rotacionActual, rotacionSiguiente);
+                AcomodarRotacion(rotacionActual, rotacionSiguiente);
             }
         }
         else
@@ -97,7 +97,7 @@ public class PlaybackTrainee : MonoBehaviour
         
     }
 
-    private void acomodarRotacion(Vector3 rotacionActual, Vector3 rotacionSiguiente)
+    private void AcomodarRotacion(Vector3 rotacionActual, Vector3 rotacionSiguiente)
     {
         //esto en el caso de que alguna de las coordenadas de la rotacion del actual este en un valor muy chico (por ejemplo 1) y 
         // el otro en un valor muy grande (por ejemplo 359). En este caso la interpolacion daria una vuelta completa, por lo que esto evita ese error

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Newtonsoft.Json;
 using Unity.VisualScripting;
 
 
@@ -90,6 +91,13 @@ public class InicializadorGrabaciones : MonoBehaviour
         }        
     }
 
+    public void CargarEvals(string pathToEvalRecording, EstructuraGrabacion estructuraGrabacion)
+    {
+        string recording = File.ReadAllText(pathToEvalRecording);
+        List<DatosEvaluacion> evals = JsonConvert.DeserializeObject<List<DatosEvaluacion>>(recording);
+        estructuraGrabacion.evals = evals;
+    }
+    
     public void CargarFrames(string pathGrabacion, string pathClima, EstructuraGrabacion _estructuraGrabacion)
     {
         using (BinaryReader reader = new BinaryReader(File.Open(pathGrabacion, FileMode.Open)))
@@ -232,8 +240,8 @@ public class InicializadorGrabaciones : MonoBehaviour
         // _estructuraGrabacion.dayNightCicle = dayNightCicle;
         // _estructuraGrabacion.weatherController = weatherController;
         //Debug.Log(reader.ReadInt32());
-        climaYToDFPS = reader.ReadInt32();
-        fileLength -= 4; //los FPS
+        //climaYToDFPS = reader.ReadInt32();
+        //fileLength -= 4; //los FPS
         while (fileLength > 0)
         {
             try
