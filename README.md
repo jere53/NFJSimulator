@@ -5,7 +5,7 @@ El proyecto utiliza la version 2021.2.0b13 de Unity. Asegurarse de tener Unity H
 
 Clonar el repositorio, luego abrir Unity Hub, seleccionar "ADD", y en el explorador elegir la carpeta en la cual se clono el repositorio.
 
-Descargar [este](https://drive.google.com/file/d/10g3pHxck5nuki5l9KdwhPd8k1atlobLS/view?usp=sharing) Unity Package para conseguir el resto de los Assets.
+Entar [aqui](https://drive.google.com/drive/u/0/folders/1ReQVB0rvMVVJBeyd1RiOm2vcusxNZCiy) y descargar el Unity Package correspondiente a la rama clonada para conseguir el resto de los Assets. (Baseline para baseline, EndSprint2 para nfjsimulator_v1.1)
 
 Abrir el proyecto desde Unity Hub, si dice que hay errores en el codigo elegir la opcion "ignorar", luego importar el Unity Package descargado anteriormente.
 
