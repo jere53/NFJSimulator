@@ -59,6 +59,7 @@ public class EstructuraGrabacion : MonoBehaviour
     {
         if (grabacion.Count == 0)
             return false;
+        
         IntervaloGrabacion intervaloActual = grabacion.Dequeue();
         
         snapshotPeatonesIntervalo = intervaloActual.snapshotPeatones;

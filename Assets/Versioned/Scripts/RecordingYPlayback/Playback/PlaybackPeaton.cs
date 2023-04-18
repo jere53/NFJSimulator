@@ -40,6 +40,13 @@ public class PlaybackPeaton : MonoBehaviour, IPlayback
     {
         //estructuraGrabacion.OnPlayIntervalo += ActualizarSnapshot;
         reproductor.OnPlayIntervalo += ActualizarSnapshot;
+        reproductor.OnPauseIntervalo += TogglePlayback;
+    }
+
+
+    public void TogglePlayback()
+    {
+        _animator.enabled = !_animator.enabled;
     }
 
     public void ActualizarSnapshot()

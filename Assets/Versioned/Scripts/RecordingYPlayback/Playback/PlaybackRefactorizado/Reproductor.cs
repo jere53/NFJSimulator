@@ -15,6 +15,7 @@ public class Reproductor : MonoBehaviour
     public float deltaIntervalosClima;
     private float timeElapsedRecording = 0;
     private float timeElapsedClima = 0;
+    private bool pause = false;
 
     public float tiempoIntervalo;
     
@@ -28,6 +29,7 @@ public class Reproductor : MonoBehaviour
     public delegate void MostrarInfraccion(DatosEvaluacion datosEvaluacion);
     public event MostrarInfraccion OnMostrarInfraccion;
     
+    public event ActualizarPosicion OnPauseIntervalo;
     
     private Coroutine coroutineGrabacion;
     private Coroutine coroutineClima;
@@ -45,6 +47,7 @@ public class Reproductor : MonoBehaviour
         StopCoroutine(coroutineGrabacion);
         StopCoroutine(coroutineClima);
     }
+
     
     public IEnumerator Play()
     {
@@ -52,19 +55,34 @@ public class Reproductor : MonoBehaviour
         currentFrame = 0;
         while(existenFrames)
         {
-            existenFrames = _estructuraGrabacion.SiguienteIntervalo();
-            OnPlayIntervalo?.Invoke();
-            try
+            Debug.Log(pause);
+            //Pausa con la letra J, el onPauseIntervalo es usado porque los peatones se quedan haciendo la animacion
+            //De caminar aunque el resto de las cosas este en pausa
+            if (Input.GetKeyDown(KeyCode.J))
             {
-                OnMostrarInfraccion?.Invoke(_estructuraGrabacion.evals[currentFrame]);
+                pause = !pause;
+                OnPauseIntervalo?.Invoke();
             }
-            catch (ArgumentException e)
+            
+            if (pause == false) 
             {
-                Debug.LogWarning(e);
-            }
+                existenFrames = _estructuraGrabacion.SiguienteIntervalo();
+                OnPlayIntervalo?.Invoke();
+                try
+                {
+                    OnMostrarInfraccion?.Invoke(_estructuraGrabacion.evals[currentFrame]);
+                }
+                catch (ArgumentException e)
+                {
+                    Debug.LogWarning(e);
+                }
 
-            currentFrame++;
-            yield return new WaitForSeconds(deltaIntervalosRecording);
+                currentFrame++;
+                
+            }
+           yield return new WaitForSeconds(deltaIntervalosRecording);
+        
+            
         }
     }
 
@@ -73,6 +91,7 @@ public class Reproductor : MonoBehaviour
         bool existenFrames = true;
         while (existenFrames)
         {
+            //Se decidio no hacer pausa del estado del clima aunque el resto de las cosas este pausado. 
             existenFrames = _estructuraGrabacion.SiguienteIntervaloClimaToD();
             switch (_estructuraGrabacion.intervaloClimaToDActual.clima)
             {
@@ -93,6 +112,7 @@ public class Reproductor : MonoBehaviour
         }
     }
 
+   
 
     
 }
