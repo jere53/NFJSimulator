@@ -9,6 +9,7 @@ TagManager:
   - ZonaEspera
   - Semaforo
   - CumplidorObjetivoEjercicio
+  - CameraPlayback
   layers:
   - Default
   - TransparentFX
