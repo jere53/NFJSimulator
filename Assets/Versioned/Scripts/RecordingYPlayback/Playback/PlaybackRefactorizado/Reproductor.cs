@@ -48,6 +48,12 @@ public class Reproductor : MonoBehaviour
         StopCoroutine(coroutineClima);
     }
 
+    public void Pausar()
+    {
+        pause = !pause;
+        OnPauseIntervalo?.Invoke();
+    }
+
     
     public IEnumerator Play()
     {
@@ -58,11 +64,6 @@ public class Reproductor : MonoBehaviour
             Debug.Log(pause);
             //Pausa con la letra J, el onPauseIntervalo es usado porque los peatones se quedan haciendo la animacion
             //De caminar aunque el resto de las cosas este en pausa
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                pause = !pause;
-                OnPauseIntervalo?.Invoke();
-            }
             
             if (pause == false) 
             {
