@@ -35,6 +35,10 @@ public class Reproductor : MonoBehaviour
     private Coroutine coroutineClima;
 
     private int currentFrame = 0;
+    
+    ControladorGrabacion ControladorGrabacion;
+    
+    private bool _rewind = false;
 
     public void Reproducir()
     {
@@ -54,20 +58,36 @@ public class Reproductor : MonoBehaviour
         OnPauseIntervalo?.Invoke();
     }
 
+    public void ToggleRewind()
+    {
+        _rewind = !_rewind;
+    }
     
+    public void CambiarVelocidad(float velocidadReproduccion)
+    {
+        ControladorGrabacion.SetearVelocidad(velocidadReproduccion);
+    }
+    
+    public void ToggleSlowMotion()
+    {
+        Debug.Log("Slow Motion");
+        ControladorGrabacion.ToggleSlowMotion();
+    }
+
+    private void Start()
+    {
+        ControladorGrabacion = GetComponent<ControladorGrabacion>();
+    }
+
     public IEnumerator Play()
     {
         bool existenFrames = true;
         currentFrame = 0;
         while(existenFrames)
         {
-            Debug.Log(pause);
-            //Pausa con la letra J, el onPauseIntervalo es usado porque los peatones se quedan haciendo la animacion
-            //De caminar aunque el resto de las cosas este en pausa
-            
             if (pause == false) 
             {
-                existenFrames = _estructuraGrabacion.SiguienteIntervalo();
+                existenFrames = _estructuraGrabacion.SiguienteIntervalo(_rewind);
                 OnPlayIntervalo?.Invoke();
                 try
                 {
@@ -82,8 +102,6 @@ public class Reproductor : MonoBehaviour
                 
             }
            yield return new WaitForSeconds(deltaIntervalosRecording);
-        
-            
         }
     }
 
@@ -113,7 +131,4 @@ public class Reproductor : MonoBehaviour
         }
     }
 
-   
-
-    
 }

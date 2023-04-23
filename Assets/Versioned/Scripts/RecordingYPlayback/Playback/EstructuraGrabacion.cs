@@ -19,7 +19,8 @@ public class EstructuraGrabacion : MonoBehaviour
     }
     
     public Queue<IntervaloClimaToD> grabacionClimaToD = new Queue<IntervaloClimaToD>();
-    public Queue<IntervaloGrabacion> grabacion = new Queue<IntervaloGrabacion>();
+    public Stack<IntervaloGrabacion> grabacion = new Stack<IntervaloGrabacion>();
+    public Stack<IntervaloGrabacion> rewindQueue = new Stack<IntervaloGrabacion>();
     public Dictionary<int, SnapshotVehiculo> snapshotVehiculosIntervalo;
     public Dictionary<int, SnapshotPeaton> snapshotPeatonesIntervalo;
     public SnapshotTrainee snapshotTraineeIntervalo;
@@ -55,12 +56,23 @@ public class EstructuraGrabacion : MonoBehaviour
         return snapshotSemaforoIntervalo.GetValueOrDefault(id, -1);
     }
     
-    public bool SiguienteIntervalo()
+    public bool SiguienteIntervalo(bool rewind)
     {
-        if (grabacion.Count == 0)
-            return false;
-        
-        IntervaloGrabacion intervaloActual = grabacion.Dequeue();
+        IntervaloGrabacion intervaloActual;
+        if (rewind)
+        {
+            if (rewindQueue.Count == 0)
+                return true;
+            intervaloActual = rewindQueue.Pop();
+            grabacion.Push(intervaloActual);
+        }
+        else
+        {
+            if (grabacion.Count == 0)
+                return true;
+            intervaloActual = grabacion.Pop();
+            rewindQueue.Push(intervaloActual);
+        }
         
         snapshotPeatonesIntervalo = intervaloActual.snapshotPeatones;
         snapshotTraineeIntervalo = intervaloActual.snapshotTrainee;
@@ -68,7 +80,7 @@ public class EstructuraGrabacion : MonoBehaviour
         snapshotSemaforoIntervalo = intervaloActual.snapshotSemaforo;
         return true;
     }
-
+    
     public bool SiguienteIntervaloClimaToD()
     {
         Debug.Log("PlayIntervaloClimaToD");

@@ -107,6 +107,7 @@ public class InicializadorGrabaciones : MonoBehaviour
 
     private void CargarElementos(EstructuraGrabacion _estructuraGrabacion, BinaryReader reader)
     {
+        Stack<EstructuraGrabacion.IntervaloGrabacion> tempStack = new Stack<EstructuraGrabacion.IntervaloGrabacion>();
         for (int intervalo = 0; intervalo < cantidadIntervalos; intervalo++)
         {
             EstructuraGrabacion.IntervaloGrabacion
@@ -219,10 +220,15 @@ public class InicializadorGrabaciones : MonoBehaviour
                 int snapshotSemaforo = reader.ReadInt32();
                 intervaloGrabacion.snapshotSemaforo.Add(s, snapshotSemaforo);
             }
-
-            _estructuraGrabacion.grabacion.Enqueue(intervaloGrabacion);
+            
+            tempStack.Push(intervaloGrabacion);
         }
         
+        // Revert the stack
+        while (tempStack.Count > 0)
+        {
+            _estructuraGrabacion.grabacion.Push(tempStack.Pop());
+        }
     }
     
 

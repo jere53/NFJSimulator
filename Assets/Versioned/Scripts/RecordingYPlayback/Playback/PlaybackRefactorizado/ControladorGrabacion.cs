@@ -24,6 +24,10 @@ public class ControladorGrabacion : MonoBehaviour
     
     private int climaYToDFPS;
     private int cantidadIntervalosClimaYToD;
+    
+    private bool _isSlowMotion = false;
+    
+    public GameObject PlaybackControls;
 
     private void Update()
     {
@@ -38,6 +42,7 @@ public class ControladorGrabacion : MonoBehaviour
     {
         AbirGrabacion();
         ReproducirGrabacion(velocidadReproduccion, interpolar);
+        PlaybackControls.gameObject.SetActive(true);
     }
     
     private void AbirGrabacion()
@@ -58,19 +63,25 @@ public class ControladorGrabacion : MonoBehaviour
         _reproductor.interpolar = interpolar;
         _reproductor.Reproducir();
     }
-
-    private void SetearVelocidad(float velocidadReproduccion)
+    
+    public void SetearVelocidad(float velocidadReproduccion)
     {
         float deltaIntervalosRecording = 1/(recordingFps * velocidadReproduccion);
         float deltaIntervalosClima = 1/(climaYToDFPS * velocidadReproduccion);
         _reproductor.deltaIntervalosRecording = deltaIntervalosRecording;
         _reproductor.deltaIntervalosClima = deltaIntervalosClima;
 
-        Debug.Log("FPS: " + recordingFps + "    Velocidad Rep: " + velocidadReproduccion + "Delta Intervalo: " + deltaIntervalosRecording);
+        // Debug.Log("FPS: " + recordingFps + "    Velocidad Rep: " + velocidadReproduccion + "Delta Intervalo: " + deltaIntervalosRecording);
     }
 
     private void ToggleInterpolar()
     {
         _reproductor.interpolar = !_reproductor.interpolar;
+    }
+
+    public void ToggleSlowMotion()
+    {
+        SetearVelocidad(_isSlowMotion ? 1 : 0.5f);
+        _isSlowMotion = !_isSlowMotion;
     }
 }
