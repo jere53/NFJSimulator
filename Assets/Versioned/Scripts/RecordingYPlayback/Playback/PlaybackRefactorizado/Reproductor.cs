@@ -60,6 +60,10 @@ public class Reproductor : MonoBehaviour
 
     public void ToggleRewind()
     {
+        if (pause)
+        {
+            Pausar();
+        }
         _rewind = !_rewind;
     }
     
@@ -70,7 +74,10 @@ public class Reproductor : MonoBehaviour
     
     public void ToggleSlowMotion()
     {
-        Debug.Log("Slow Motion");
+        if (pause)
+        {
+            Pausar();
+        }
         ControladorGrabacion.ToggleSlowMotion();
     }
 
