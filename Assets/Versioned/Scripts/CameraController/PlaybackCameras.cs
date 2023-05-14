@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,15 @@ public class PlaybackCameras : MonoBehaviour
     void Update()
     {
         CameraList = GameObject.FindGameObjectsWithTag(tag); // TODO : Review
+        if (Input.GetKey(KeyCode.I))
+        {
+            ChangeCamera();            
+        }
+    }
+
+    private void Start()
+    {
+        ChangeCamera();
     }
 
     public void ChangeCamera()
