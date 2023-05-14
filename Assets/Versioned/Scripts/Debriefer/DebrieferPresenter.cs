@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using SimpleFileBrowser;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class DebrieferPresenter : MonoBehaviour
 {
@@ -37,7 +38,10 @@ public class DebrieferPresenter : MonoBehaviour
     {
         pathArchivoEvaluacion.text = paths[0];
     }
-
+    public void CambiarEscena(string nombre)
+    {
+        SceneManager.LoadScene(nombre);
+    }
     public void OnButtonDebriefPressed()
     {
         debrieferModel.CargarDatosEvaluacion(pathArchivoEvaluacion.text);

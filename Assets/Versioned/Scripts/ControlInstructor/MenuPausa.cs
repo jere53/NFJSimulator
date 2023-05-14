@@ -17,6 +17,7 @@ public class MenuPausa : EscapeDialog
     public WeatherController controlClima;
     public VehicleBase VehiculoTrainee;
     
+    public GameObject uiMenuEleccion;
     public GameObject uiMenuPausa;
     public GameObject condiciones;
     public GameObject ejercicios;
@@ -63,14 +64,32 @@ public class MenuPausa : EscapeDialog
     }
 
 
-    public void MenuPrincipal()
+    public void MenuPrincipalEvaluador()
     {
+        princial.SetActive(true);
+        condiciones.SetActive(false);
+        ejercicios.SetActive(false);
+        //
+        //evaluacionActual.SetActive(false);
+        //accidentes.SetActive(false);
+        //grabacion.SetActive(false);
+    }
+    public void MenuPrincipalGrabador()
+    {
+        princial.SetActive(true);
         condiciones.SetActive(false);
         ejercicios.SetActive(false);
         evaluacionActual.SetActive(false);
-        princial.SetActive(true);
         accidentes.SetActive(false);
         grabacion.SetActive(false);
+    }
+    public void MenuPrincipalPresentador()
+    {
+        princial.SetActive(true);
+        condiciones.SetActive(false);
+        ejercicios.SetActive(false);
+        evaluacionActual.SetActive(false);
+        accidentes.SetActive(false);
     }
     
     public void Condiciones()
@@ -96,6 +115,19 @@ public class MenuPausa : EscapeDialog
         princial.SetActive(false);
         accidentes.SetActive(true);
     }
+
+    public void BeEvaluator()
+    {
+        uiMenuEleccion.SetActive(false);
+        princial.SetActive(true);
+        
+    }
+    public void ReturnToEvaluationMenu()
+    {
+        
+        princial.SetActive(false);
+        uiMenuEleccion.SetActive(true);
+    }
     public void Quit()
     {
         Application.Quit();
@@ -104,6 +136,10 @@ public class MenuPausa : EscapeDialog
     public void IrADebriefing()
     {
         SceneManager.LoadScene(1);
+    }
+    public void CambiarEscena(string nombre)
+    {
+        SceneManager.LoadScene(nombre);
     }
 
     public void MenuGrabacion()
