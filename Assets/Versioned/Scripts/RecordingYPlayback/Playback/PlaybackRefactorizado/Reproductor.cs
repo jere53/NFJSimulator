@@ -62,8 +62,6 @@ public class Reproductor : MonoBehaviour
         while(existenFrames)
         {
             Debug.Log(pause);
-            //Pausa con la letra J, el onPauseIntervalo es usado porque los peatones se quedan haciendo la animacion
-            //De caminar aunque el resto de las cosas este en pausa
             
             if (pause == false) 
             {
