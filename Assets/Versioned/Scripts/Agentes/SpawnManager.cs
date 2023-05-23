@@ -10,6 +10,12 @@ using UnityEngine.AI;
 
 public class SpawnManager : MonoBehaviour
 {
+    public GameObject Ambulancia;
+    public GameObject Ciudad;
+    public GameObject Semaforos;
+    public GameObject UIVelocimetro;
+    public GameObject UIGeneral;
+
     public bool cambioMaximoPeatones; //solo para testear el cambio de maximo desde el editor
     public bool cambioMaximoVehiculos;
     
@@ -46,6 +52,7 @@ public class SpawnManager : MonoBehaviour
 
     public IEnumerator SpawnearVehiculosInicial()
     {
+
         Collider[] spawners = Physics.OverlapSphere(vehiculoTrainee.transform.position, 20000f,
             1 << 14, QueryTriggerInteraction.Collide);
         //conseguimos Spawners en rango de la ambulancia, el 1<<14 dice que solo tomemos collideres
@@ -341,14 +348,7 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnearPeatonesInicial()); //se spawnea el maximo seleccionado
-        StartCoroutine(SpawnearVehiculosInicial());
         
-        //se comienza a revisar si hay que re-spawnear peatones
-        StartCoroutine(DeSpawnearPeatonesLejanosJugador());
-        StartCoroutine(ReSpawnearPeatones());
-        StartCoroutine(DeSpawnearVehiculosLejanosJugador());
-        StartCoroutine(ReSpawnearVehiculos());
     }
 
     public void Update()
@@ -365,4 +365,23 @@ public class SpawnManager : MonoBehaviour
             cambioMaximoVehiculos = false;
         }
     }
+
+    public void ActivateSpawners()
+    {
+
+        StartCoroutine(SpawnearPeatonesInicial()); //se spawnea el maximo seleccionado
+        StartCoroutine(SpawnearVehiculosInicial());
+        //se comienza a revisar si hay que re-spawnear peatones
+        StartCoroutine(DeSpawnearPeatonesLejanosJugador());
+        StartCoroutine(ReSpawnearPeatones());
+        StartCoroutine(DeSpawnearVehiculosLejanosJugador());
+        StartCoroutine(ReSpawnearVehiculos());
+        Ciudad.SetActive(true);
+        Ambulancia.SetActive(true);
+        Semaforos.SetActive(true);
+        UIVelocimetro.SetActive(true);
+        UIGeneral.SetActive(true);
+        
+    }
+    
 }

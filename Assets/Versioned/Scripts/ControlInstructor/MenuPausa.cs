@@ -18,6 +18,7 @@ public class MenuPausa : EscapeDialog
     public VehicleBase VehiculoTrainee;
     
     public GameObject uiMenuEleccion;
+    public GameObject uiMenuEvaluado;
     public GameObject uiMenuPausa;
     public GameObject condiciones;
     public GameObject ejercicios;
@@ -25,6 +26,12 @@ public class MenuPausa : EscapeDialog
     public GameObject evaluacionActual;
     public GameObject accidentes;
     public GameObject grabacion;
+
+    private void Start() 
+    {
+        this.gameObject.SetActive(true);
+        
+    }
 
     void Update ()
     {
@@ -41,6 +48,7 @@ public class MenuPausa : EscapeDialog
     private void OnDisable()
     {
         Resumir();
+        
     }
 
     public void Pausar()
@@ -120,6 +128,12 @@ public class MenuPausa : EscapeDialog
     {
         uiMenuEleccion.SetActive(false);
         princial.SetActive(true);
+        
+    }
+    public void BeEvaluated()
+    {
+        uiMenuEleccion.SetActive(false);
+        uiMenuEvaluado.SetActive(true);
         
     }
     public void ReturnToEvaluationMenu()
