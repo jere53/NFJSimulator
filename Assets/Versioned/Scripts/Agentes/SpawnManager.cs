@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using Trafico;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Netcode;
 
-public class SpawnManager : MonoBehaviour
+public class SpawnManager : NetworkBehaviour
 {
     public bool cambioMaximoPeatones; //solo para testear el cambio de maximo desde el editor
     public bool cambioMaximoVehiculos;
@@ -61,7 +64,6 @@ public class SpawnManager : MonoBehaviour
             {
                 var v = spawneablesPool.AdquirirVehiculo();
                 spawners[i % spawnersLength].GetComponent<SpawnerVehiculos>().Spawn(v, this);
-
                 yield return null;
             }
         }
@@ -341,16 +343,23 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // HandleSpawnVehiculosYPeatones(); 
+    }
+
+    public void HandleSpawnVehiculosYPeatones()
+    {
+        Debug.Log("Spawneando vehiculos y peatones");
+        
+        // Check if is host
         StartCoroutine(SpawnearPeatonesInicial()); //se spawnea el maximo seleccionado
         StartCoroutine(SpawnearVehiculosInicial());
-        
+            
         //se comienza a revisar si hay que re-spawnear peatones
         StartCoroutine(DeSpawnearPeatonesLejanosJugador());
         StartCoroutine(ReSpawnearPeatones());
         StartCoroutine(DeSpawnearVehiculosLejanosJugador());
         StartCoroutine(ReSpawnearVehiculos());
     }
-
     public void Update()
     {
         if (cambioMaximoPeatones)

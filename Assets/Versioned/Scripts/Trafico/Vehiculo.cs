@@ -1,9 +1,12 @@
 ﻿using System;
+using Unity.Netcode;
+using Unity.Netcode.Components;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Trafico
 {
-    public class Vehiculo : MonoBehaviour
+    public class Vehiculo : NetworkBehaviour
     {
 
         private IAVehiculo _iaVehiculo;
@@ -30,6 +33,8 @@ namespace Trafico
 
         private void Awake()
         {
+            this.AddComponent<NetworkTransform>();
+            this.AddComponent<NetworkObject>();
             _iaVehiculo = GetComponent<IAVehiculo>();
             rb = GetComponent<Rigidbody>();
         }

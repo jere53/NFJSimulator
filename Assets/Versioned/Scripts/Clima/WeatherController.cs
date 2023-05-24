@@ -75,19 +75,19 @@ public class WeatherController : MonoBehaviour
         NotifyWeatherChange();
     }
 
-    // private void Update() {
-    //     if (Input.GetMouseButtonDown(0)) {
-    //         RainPreset();
-    //     }
-    //
-    //     if (Input.GetMouseButtonDown(1))
-    //     {
-    //         SunnyPreset();
-    //     }
-    //
-    //     if (Input.GetMouseButtonDown(2))
-    //     {
-    //         CloudyPreset();
-    //     }
-    // }
+    private void Update() {
+        // if (Input.GetMouseButtonDown(0)) {
+        //     RainPreset();
+        // }
+        //
+        // if (Input.GetMouseButtonDown(1))
+        // {
+        //     SunnyPreset();
+        // }
+        //
+        // if (Input.GetMouseButtonDown(2))
+        // {
+        //     CloudyPreset();
+        // }
+    }
 }

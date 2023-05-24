@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using Trafico;
+using Unity.Netcode;
+using Unity.Netcode.Components;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class SpawnerVehiculos : MonoBehaviour
+public class SpawnerVehiculos : NetworkBehaviour
 {
     public Waypoint waypointInicial;
 
