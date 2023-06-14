@@ -339,12 +339,6 @@ public class SpawnManager : NetworkBehaviour
         
         spawners[0].GetComponent<SpawnerVehiculos>().Spawn(v, this);
     }
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        // HandleSpawnVehiculosYPeatones(); 
-    }
 
     public void HandleSpawnVehiculosYPeatones()
     {

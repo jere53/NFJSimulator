@@ -33,8 +33,6 @@ namespace Trafico
 
         private void Awake()
         {
-            this.AddComponent<NetworkTransform>();
-            this.AddComponent<NetworkObject>();
             _iaVehiculo = GetComponent<IAVehiculo>();
             rb = GetComponent<Rigidbody>();
         }

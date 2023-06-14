@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SimpleFileBrowser;
 using TMPro;
 using UnityEngine;
@@ -8,6 +9,19 @@ using VehiclePhysics.UI;
 
 public class MenuPausa : EscapeDialog
 {
+    // Enum values for menu
+    public enum PauseMenuEnum
+    {
+        MenuEvaluado,
+        MenuEvaluador,
+        MenuPausa,
+        MenuCondiciones,
+        MenuEjercicios,
+        MenuPrincipal,
+        MenuEvaluacionActual,
+        MenuAccidentes,
+        MenuGrabacion
+    }
 
     private AudioListener AudioListener; //solamente hay un AudioListener, Unity automaticamente lo asigna
 
@@ -17,50 +31,104 @@ public class MenuPausa : EscapeDialog
     public WeatherController controlClima;
     public VehicleBase VehiculoTrainee;
     
-    public GameObject uiMenuEleccion;
     public GameObject uiMenuEvaluado;
-    public GameObject uiMenuPausa;
+    public GameObject uiMenuEvaluador;
     public GameObject condiciones;
     public GameObject ejercicios;
     public GameObject princial;
     public GameObject evaluacionActual;
     public GameObject accidentes;
     public GameObject grabacion;
+    
+    // Map for menus
+    private Dictionary<PauseMenuEnum, GameObject> _menus = new Dictionary<PauseMenuEnum,GameObject>();
+    
+    // Save current menu
+    private PauseMenuEnum CURRENT_MENU;
 
-    private void Start() 
+    private void Start()
     {
-        this.gameObject.SetActive(true);
+        // Generate a map 
+        _menus.Add(PauseMenuEnum.MenuEvaluado, uiMenuEvaluado);
+        _menus.Add(PauseMenuEnum.MenuEvaluador, uiMenuEvaluador);
+        _menus.Add(PauseMenuEnum.MenuCondiciones, condiciones);
+        _menus.Add(PauseMenuEnum.MenuEjercicios, ejercicios);
+        _menus.Add(PauseMenuEnum.MenuPrincipal, princial);
+        _menus.Add(PauseMenuEnum.MenuEvaluacionActual, evaluacionActual);
+        _menus.Add(PauseMenuEnum.MenuAccidentes, accidentes);
+        _menus.Add(PauseMenuEnum.MenuGrabacion, grabacion);
+        
+        DisableAllMenus();
     }
+    
+    private void DisableAllMenus()
+    {
+        foreach (var m in _menus)
+        {
+            m.Value.SetActive(false);
+        }
+    }
+
     void Update ()
     {
         if (Input.GetKeyDown(escapeKey))
-            this.gameObject.SetActive(false);
+        {
+            if (estaPausado)
+                Resumir();
+            else
+                Pausar();
+        }
     }
     
-    private void OnEnable()
-    {
-        Pausar();
-    }
-
+    // private void OnEnable()
+    // {
+    //     Pausar();
+    // }
+    //
+    // private void OnDisable()
+    // {
+    //     Resumir();
+    // }
     
-    private void OnDisable()
+    private void DesactivarMenuActual()
     {
-        Resumir();
+        _menus[CURRENT_MENU].SetActive(false);
+    }
+    
+    private void ActivarMenuActual()
+    {
+        Debug.Log(CURRENT_MENU);
+        _menus[CURRENT_MENU].SetActive(true);
+    }
+    
+    public void SetCurrentPauseMenu(PauseMenuEnum menu)
+    {
+        CURRENT_MENU = menu;
+        Debug.Log(CURRENT_MENU);
+    }
+    
+    private void Pausar()
+    {
+        ActivarMenuActual();
+        PausarSimulacion();
+    }
+    
+    private void Resumir()
+    {
+        DesactivarMenuActual();
+        ResumirSimulacion();
     }
 
-    public void Pausar()
+    public void PausarSimulacion()
     {
-        uiMenuPausa.SetActive(true);
         Time.timeScale = 0f;
         AudioListener.pause = true;
         estaPausado = true;
         controlClima.enabled = false;
         controlVehiculo.enabled = false;
     }
-
-    public void Resumir()
+    public void ResumirSimulacion()
     {
-        uiMenuPausa.SetActive(false);
         Time.timeScale = 1f;
         AudioListener.pause = false;
         estaPausado = false;
@@ -74,10 +142,6 @@ public class MenuPausa : EscapeDialog
         princial.SetActive(true);
         condiciones.SetActive(false);
         ejercicios.SetActive(false);
-        //
-        //evaluacionActual.SetActive(false);
-        //accidentes.SetActive(false);
-        //grabacion.SetActive(false);
     }
     public void MenuPrincipalGrabador()
     {
@@ -121,25 +185,6 @@ public class MenuPausa : EscapeDialog
         accidentes.SetActive(true);
     }
 
-    public void BeEvaluator()
-    {
-        uiMenuEleccion.SetActive(false);
-        princial.SetActive(true);
-        
-    }
-    
-    public void BeEvaluated()
-    {
-        uiMenuEleccion.SetActive(false);
-        uiMenuEvaluado.SetActive(true);
-        
-    }
-    public void ReturnToEvaluationMenu()
-    {
-        
-        princial.SetActive(false);
-        uiMenuEleccion.SetActive(true);
-    }
     public void Quit()
     {
         Application.Quit();
