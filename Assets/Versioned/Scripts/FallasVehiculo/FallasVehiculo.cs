@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using VehiclePhysics;
 
-public class FallasVehiculo : MonoBehaviour
+public class FallasVehiculo : NetworkBehaviour
 {
     //Componente que contiene la instancia de vehicle
     public GameObject myVehicle;
@@ -53,6 +54,12 @@ public class FallasVehiculo : MonoBehaviour
         else
             vc.brakes.maxBrakeTorque = breakTorque;
     }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void CortarFrenosServerRpc()
+    {
+        Frenos();
+    }
 
 
     public void FrenoDeManos()
@@ -62,6 +69,12 @@ public class FallasVehiculo : MonoBehaviour
             vc.brakes.handbrakeTorque = 0;
         else
             vc.brakes.handbrakeTorque = handBreakTorque;
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void CortarFrenoDeManosServerRpc()
+    {
+        FrenoDeManos();
     }
     
     public void PincharRueda(int wheelIndex)
@@ -88,6 +101,12 @@ public class FallasVehiculo : MonoBehaviour
         tel.vehicle.SetWheelTireFrictionMultiplier (wheelIndex, 1.22f); //aumento la friccion de la rueda 
     }
     
+    [ServerRpc(RequireOwnership = false)]
+    public void PincharRuedaServerRpc(int wheelIndex)
+    {
+        PincharRueda(wheelIndex);
+    }
+    
     public void ReventarRueda(int wheelIndex)
     {
         float radius = 0.33f; //0.33 es el valor default del radio de la rueda
@@ -111,6 +130,12 @@ public class FallasVehiculo : MonoBehaviour
         tel.vehicle.SetWheelTireFrictionMultiplier (wheelIndex, 0.2f);
     }
     
+    [ServerRpc(RequireOwnership = false)]
+    public void ReventarRuedaServerRpc(int wheelIndex)
+    {
+        ReventarRueda(wheelIndex);
+    }
+    
     public void EmpaniarVidrio()
     {
         if (!defoggerActivated)
@@ -119,6 +144,12 @@ public class FallasVehiculo : MonoBehaviour
             tarnishedValue = (maxTarnished - minTarnished) * Math.Abs(1 - tarnishedIntensity) + minTarnished; 
             c1 = StartCoroutine(CorutinaEmpaniar(tarnishedTime));
         }
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void EmpaniarVidrioServerRpc()
+    {
+        EmpaniarVidrio();
     }
 
     IEnumerator CorutinaEmpaniar(float time)
@@ -151,7 +182,6 @@ public class FallasVehiculo : MonoBehaviour
         {
             defoggerActivated = false;
         }
-        
     }
     
     IEnumerator CorutinaDesempaniar()

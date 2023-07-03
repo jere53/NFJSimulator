@@ -12,10 +12,10 @@ public class BotonConfirmar : MonoBehaviour
     public TMPro.TMP_Dropdown seleccionClima;
 
     public LocalSimulationController simulationController;
-
+    
     public void Confirmar()
     {
-        
+                
         switch (seleccionClima.value)
         {
             case 0 or 1:
@@ -33,6 +33,4 @@ public class BotonConfirmar : MonoBehaviour
         simulationController.SetVehiculos((int)_sliderVehiculos.value);
         simulationController.SetToD(_sliderHoraDelDia.value, _sliderVelocidadDia.value);
     }
-
-
 }

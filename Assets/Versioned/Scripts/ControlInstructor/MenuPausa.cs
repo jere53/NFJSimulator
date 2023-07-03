@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SimpleFileBrowser;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VehiclePhysics;
@@ -31,6 +32,8 @@ public class MenuPausa : EscapeDialog
     public WeatherController controlClima;
     public VehicleBase VehiculoTrainee;
     
+    [SerializeField] private EvaluationController _evaluationController;
+    
     public GameObject uiMenuEvaluado;
     public GameObject uiMenuEvaluador;
     public GameObject condiciones;
@@ -45,6 +48,9 @@ public class MenuPausa : EscapeDialog
     
     // Save current menu
     private PauseMenuEnum CURRENT_MENU;
+    
+    // Warning
+    [SerializeField] private GameObject evaluatedPauseWarning;
 
     private void Start()
     {
@@ -61,6 +67,12 @@ public class MenuPausa : EscapeDialog
         DisableAllMenus();
     }
     
+    public void ToggleShowEvaluatedPauseWarning()
+    {
+        // Toggle active state
+        if (NetworkManager.Singleton.IsClient) evaluatedPauseWarning.SetActive(!evaluatedPauseWarning.activeSelf);
+    }
+    
     private void DisableAllMenus()
     {
         foreach (var m in _menus)
@@ -73,23 +85,18 @@ public class MenuPausa : EscapeDialog
     {
         if (Input.GetKeyDown(escapeKey))
         {
+            _evaluationController.TogglePause();
             if (estaPausado)
+            {
                 Resumir();
+            }
             else
+            {
                 Pausar();
+            }
         }
     }
-    
-    // private void OnEnable()
-    // {
-    //     Pausar();
-    // }
-    //
-    // private void OnDisable()
-    // {
-    //     Resumir();
-    // }
-    
+
     private void DesactivarMenuActual()
     {
         _menus[CURRENT_MENU].SetActive(false);
@@ -97,26 +104,27 @@ public class MenuPausa : EscapeDialog
     
     private void ActivarMenuActual()
     {
-        Debug.Log(CURRENT_MENU);
         _menus[CURRENT_MENU].SetActive(true);
+        
     }
     
     public void SetCurrentPauseMenu(PauseMenuEnum menu)
     {
         CURRENT_MENU = menu;
-        Debug.Log(CURRENT_MENU);
     }
     
-    private void Pausar()
+    public void Pausar()
     {
+        estaPausado = true;
         ActivarMenuActual();
-        PausarSimulacion();
+        if(NetworkManager.Singleton.IsServer) PausarSimulacion();
     }
     
-    private void Resumir()
+    public void Resumir()
     {
+        estaPausado = false;
         DesactivarMenuActual();
-        ResumirSimulacion();
+        if(NetworkManager.Singleton.IsServer) ResumirSimulacion();
     }
 
     public void PausarSimulacion()
@@ -233,6 +241,12 @@ public class MenuPausa : EscapeDialog
         FileBrowser.ShowSaveDialog(ComenzarGrabacion, null, FileBrowser.PickMode.Files,
             false, initialPath);
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void OnButtonComenzarGrabacionPressedServerRPC(TMP_InputField inputField)
+    {
+        OnButtonComenzarGrabacionPressed(inputField);
+    }
     
     void ComenzarGrabacion(string[] paths)
     {
@@ -252,9 +266,22 @@ public class MenuPausa : EscapeDialog
         RecordingManager.Instance.StartRecording(pathToRecordingFolder, recordingFileName);
         
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ComenzarGrabacionServerRPC(string[] paths)
+    {
+        ComenzarGrabacion(paths);
+    }
     
     public void OnButtonConcluirGrabacionPressed()
     {
         RecordingManager.Instance.StopRecording();
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void OnButtonConcluirGrabacionPressedServerRPC()
+    {
+        OnButtonConcluirGrabacionPressed();
+    }
+    
 }

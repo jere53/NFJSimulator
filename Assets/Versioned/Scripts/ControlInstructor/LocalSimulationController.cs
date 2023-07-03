@@ -4,7 +4,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class LocalSimulationController : MonoBehaviour
+public class LocalSimulationController : NetworkBehaviour
 {
     private EvaluationService _evaluationService = new EvaluationService();
     public WeatherController weatherController;
@@ -20,29 +20,37 @@ public class LocalSimulationController : MonoBehaviour
         {
             case "sunny":
                 weatherController.SunnyPreset();
+                weatherController.SunnyPresetServerRpc();
                 break;
             case "rainy":
                 weatherController.RainPreset();
+                weatherController.RainPresetServerRpc();
                 break;
             case "cloudy":
                 weatherController.CloudyPreset();
+                weatherController.CloudyPresetServerRpc();
                 break;
         }
     }
 
     public void SetVehiculos(int maxVehiculos)
     {
+        // _simulationController.SetWeatherServerRpc(maxVehiculos);
         spawnManager.ModificarMaximoVehiculos(maxVehiculos);
+        spawnManager.ModificarMaximoVehiculosServerRpc(maxVehiculos);
     }
 
     public void SetPeatones(int maxPeatones)
     {
+        // _simulationController
         spawnManager.ModificarMaximoPeatones(maxPeatones);
+        spawnManager.ModificarMaximoPeatonesServerRpc(maxPeatones);
     }
 
     public void SetToD(float hora, float velocidad)
     {
         dayNightCicle.CambiarToD(hora, velocidad);
+        dayNightCicle.CambiarTodServerRpc(hora, velocidad);
     }
 
     public void ComenzarEjercicio(int indiceEjercicio, bool evalTiempo, int maxMinutos, int maxSegundos,

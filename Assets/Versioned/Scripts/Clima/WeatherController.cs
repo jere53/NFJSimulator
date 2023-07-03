@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
-public class WeatherController : MonoBehaviour
+public class WeatherController : NetworkBehaviour
 {
     public Volume volume;
     private VolumeProfile _volumeProfile;
@@ -75,19 +76,38 @@ public class WeatherController : MonoBehaviour
         NotifyWeatherChange();
     }
 
-    private void Update() {
-        // if (Input.GetMouseButtonDown(0)) {
-        //     RainPreset();
-        // }
-        //
-        // if (Input.GetMouseButtonDown(1))
-        // {
-        //     SunnyPreset();
-        // }
-        //
-        // if (Input.GetMouseButtonDown(2))
-        // {
-        //     CloudyPreset();
-        // }
+    // private void Update() {
+    //     if (Input.GetMouseButtonDown(0)) {
+    //         RainPreset();
+    //     }
+    //     if (Input.GetMouseButtonDown(1))
+    //     {
+    //         SunnyPreset();
+    //     }
+    //     if (Input.GetMouseButtonDown(2))
+    //     {
+    //         CloudyPreset();
+    //     }
+    // }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void SunnyPresetServerRpc()
+    {
+        Debug.Log("---------------------------------------------------------------------");
+        SunnyPreset();
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void RainPresetServerRpc()
+    {        
+        Debug.Log("---------------------------------------------------------------------");
+        RainPreset();
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void CloudyPresetServerRpc()
+    {        
+        Debug.Log("---------------------------------------------------------------------");
+        CloudyPreset();
     }
 }

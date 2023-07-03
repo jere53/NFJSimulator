@@ -282,6 +282,12 @@ public class SpawnManager : NetworkBehaviour
         StartCoroutine(ReSpawnearPeatones());
 
     }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void ModificarMaximoPeatonesServerRpc(int nuevoMax)
+    {
+        ModificarMaximoPeatones(nuevoMax);
+    }
 
     public void ModificarMaximoVehiculos(int nuevoMax)
     {
@@ -299,6 +305,12 @@ public class SpawnManager : NetworkBehaviour
         StartCoroutine(DeSpawnearVehiculosLejanosJugador());
         StartCoroutine(ReSpawnearVehiculos());
 
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void ModificarMaximoVehiculosServerRpc(int nuevoMax)
+    {
+        ModificarMaximoVehiculos(nuevoMax);
     }
     
     

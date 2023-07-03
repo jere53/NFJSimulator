@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Handle UI Menu
 /// </summary>
-public class UIMananger : MonoBehaviour
+public class UIMananger : NetworkBehaviour
 {
     // Buttons
     [SerializeField] private Button evaluatedBtn;
@@ -53,6 +53,7 @@ public class UIMananger : MonoBehaviour
     
     private void DesactivarMenus()
     {
+        Debug.Log(_menus.Values.Count);
         foreach (var m in _menus)
         {
             m.Value.SetActive(false);
@@ -61,7 +62,6 @@ public class UIMananger : MonoBehaviour
 
     private void Awake()
     {
-        
         evaluatedBtn.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
@@ -76,7 +76,5 @@ public class UIMananger : MonoBehaviour
             DesactivarMenus();
             _menuPausaManager.SetCurrentPauseMenu(MenuPausa.PauseMenuEnum.MenuEvaluador);
         });
-        
     }
-    
 }
