@@ -1,5 +1,9 @@
 # NFJSimulator
 
+
+https://github.com/jere53/NFJSimulator/assets/64437798/c0be8079-e157-443b-b739-30d5ba12f1bc
+
+
 ## Como descargar el Proyecto
 El proyecto utiliza la version 2021.2.0b13 de Unity. Asegurarse de tener Unity Hub y esta version de Unity instalada.
 
